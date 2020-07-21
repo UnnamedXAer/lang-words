@@ -1,0 +1,10 @@
+.side-drawer {
+	width: var(--drawer-width);
+	border-left: 1px solid var(--border-stronger);
+	background-color: var(--bg-drawer);
+}
+
+.side-drawer-header {
+	background-color: var(--bg-header);
+	height: var(--header-height);
+}

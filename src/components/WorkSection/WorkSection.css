@@ -1,0 +1,4 @@
+.work-section {
+	background-color: var(--bg-work-section);
+	flex: 1;
+}
