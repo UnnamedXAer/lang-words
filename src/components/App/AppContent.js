@@ -10,14 +10,14 @@ const AppContent = () => {
 		<div className="app-content">
 			<div className="app-content-work-section-container">
 				<SideDrawer />
-				<div className='app-content-work-section'>
+				<div className="app-content-work-section">
 					<Header />
-					<WorkSection/>
+					<WorkSection />
 				</div>
 			</div>
 			<Footer />
 		</div>
-	)
-}
+	);
+};
 
-export default AppContent
+export default AppContent;

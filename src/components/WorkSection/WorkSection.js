@@ -6,7 +6,7 @@ const WorkSection = () => {
 		<main className="work-section">
 			<h1>content</h1>
 		</main>
-	)
-}
+	);
+};
 
-export default WorkSection
+export default WorkSection;

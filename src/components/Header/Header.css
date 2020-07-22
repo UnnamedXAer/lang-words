@@ -3,8 +3,7 @@
 	height: var(--header-height);
 	width: 100%;
 	background-color: var(--bg-header);
-	overflow-y: hidden;
-	position: relative;
+	z-index: 100;
 
 	display: flex;
 	flex-direction: row;
@@ -34,16 +33,19 @@
 	margin-left: 16px;
 }
 
+.header-actions > span:last-of-type > button {
+	margin: 0;
+}
+
 .header-actions-button {
 	margin: 0 16px 0 0;
 	height: 32px;
 	width: 32px;
-	border: none;
-	background-color: inherit;
-	color: var(--color-dark);
-	cursor: pointer;
 }
 
-.header-actions-button:last-of-type {
-	margin: 0;
+.header-add-word-placeholder {
+	width: 10;
+	height: 100%;
+	background-color: blue;
+	position: relative;
 }

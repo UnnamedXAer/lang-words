@@ -1,0 +1,13 @@
+.input {
+	background-color: var(--bg-input);
+	color: var(--color-dark);
+	font-size: medium;
+	padding: 8px 16px;
+	margin: 8px;
+}
+
+.input:focus {
+	outline-style: solid;
+	outline-color: var(--border-stronger);
+	outline-width: thick;
+}
