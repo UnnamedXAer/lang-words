@@ -1,6 +1,13 @@
+@font-face {
+	font-family: 'OpenSans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('OpenSans'),
+		url(./assets/fonts/Open_Sans/OpenSans-Regular.ttf) format('truetype');
+}
+
 :root {
-	--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	--font-family: OpenSans;
 
 	--footer-height: 60px;
 	--header-height: 60px;
@@ -21,8 +28,13 @@
 	--border-stronger: rgba(241, 241, 242, 0.11);
 	--shadow: #000;
 	--shadow-rgb: 0, 0, 0;
+
+	--button-success: #009688;
+	--button-danger: #ef697a;
+	--button-disabled: #999;
 }
 
+*::before,
 a,
 abbr,
 acronym,
@@ -113,13 +125,16 @@ video {
 
 ul {
 	list-style: none;
+	font-style: italic;
 }
 
-button, [role='button'] {
+button,
+[role='button'] {
 	cursor: pointer;
 }
 
-button:disabled, [role='button']:disabled {
+button:disabled,
+[role='button']:disabled {
 	cursor: auto;
 }
 
