@@ -7,6 +7,7 @@ import Input from '../UI/Input/Input';
 const AddWord = (props) => {
 	const [word, setWord] = useState('word');
 	const [translation, setTranslation] = useState('desktop');
+	const [loading, setLoading] = useState(false);
 
 	const valueChangeHandler = (ev) => {
 		if (ev.target.name === 'word') {
@@ -16,8 +17,17 @@ const AddWord = (props) => {
 		}
 	};
 
-	const submitHandler = (ev) => {
+	const cancelHandler = () => {
+		setLoading(false);
 		props.onClose();
+	};
+
+	const submitHandler = (ev) => {
+		setLoading(true);
+		setTimeout(() => {
+			props.onClose();
+			setLoading(false);
+		}, 1000);
 	};
 
 	return (
@@ -34,7 +44,14 @@ const AddWord = (props) => {
 				onChange={valueChangeHandler}
 				placeholder="Enter translation"
 			/>
-			<Button onClick={submitHandler}>Add</Button>
+			<div className="add-word-actions">
+				<Button btnType="danger" onClick={cancelHandler}>
+					Cancel
+				</Button>
+				<Button btnType="success" onClick={submitHandler} loading={loading}>
+					Add
+				</Button>
+			</div>
 		</DropDown>
 	);
 };

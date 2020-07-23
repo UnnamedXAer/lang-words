@@ -5,7 +5,6 @@
 	src: local('OpenSans'),
 		url(./assets/fonts/Open_Sans/OpenSans-Regular.ttf) format('truetype');
 }
-
 :root {
 	--font-family: OpenSans;
 
@@ -20,11 +19,13 @@
 	--bg-work-section: #0d1418;
 	--bg-drop-down: #2a2f32;
 	--bg-input: #33383b;
+	--bg-button: transparent;
+	/* --bg-button: #323b41; */
 
 	--color-light: rgba(241, 241, 242, 0.96);
 	--color-main: rgba(241, 241, 242, 0.92);
 	--color-dark: #b1b3b5;
-	--border: #242d32;
+	--border: rgb(36, 45, 50);
 	--border-stronger: rgba(241, 241, 242, 0.11);
 	--shadow: #000;
 	--shadow-rgb: 0, 0, 0;
@@ -32,6 +33,7 @@
 	--button-success: #009688;
 	--button-danger: #ef697a;
 	--button-disabled: #999;
+	--button-hover: #222527;
 }
 
 *::before,

@@ -1,3 +1,13 @@
 .add-word {
 	top: 16px;
 }
+
+.add-word-actions {
+	margin: 8px 16px 0 16px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.add-word-actions button:first-child {
+	margin-right: 16px;
+}
