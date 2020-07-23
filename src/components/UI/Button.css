@@ -2,10 +2,32 @@
 	border: none;
 	background-color: inherit;
 	color: var(--color-dark);
+	padding: 8px 20px;
+	text-transform: uppercase;
+	font-weight: 600;
+
+	position: relative;
 }
 
+.button.danger {
+	color: var(--button-danger);
+}
+
+.button.success {
+	color: var(--button-success);
+}
+
+.button:disabled {
+	color: var(--button-disabled);
+}
 .button:focus {
 	outline-style: solid;
 	outline-color: var(--border-stronger);
 	outline-width: thick;
+}
+
+.button-spinner-wrapper {
+	position: absolute;
+	left: 0;
+	top: calc(50% - 8px);
 }
