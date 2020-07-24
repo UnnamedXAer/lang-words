@@ -11,17 +11,28 @@ const DropDown = ({ open, children, onClose, className }) => {
 			}
 		};
 
+		const keyPressHandler = (ev) => {
+			console.log(ev.keyCode);
+			if (ev.keyCode === 27) {
+				onClose();
+			}
+		};
+		const element = ref.current;
 		if (open) {
 			document.addEventListener('click', clickOutsideHandler);
+			element.addEventListener('keypress', keyPressHandler);
 		}
 
 		return () => {
 			document.removeEventListener('click', clickOutsideHandler);
+			element.addEventListener('keypress', keyPressHandler);
 		};
 	}, [onClose, open]);
 
 	return (
 		<div
+			tabIndex={1}
+			
 			ref={ref}
 			className={['drop-down', open ? 'drop-down-open' : '', className].join(' ')}
 		>

@@ -1,27 +1,24 @@
 import React, { useContext } from 'react';
 import './WorkSection.css';
-import { CounterContext } from '../../App';
 import Button from '../UI/Button';
+import { WordsContext } from '../../context/WordsContext';
 
 const WorkSection = () => {
-	const [counter, setCounter] = useContext(CounterContext);
+	const [state] = useContext(WordsContext);
 
 	return (
 		<main className="work-section">
 			<h1>content</h1>
-			<p>{JSON.stringify(counter, null, '\t')}</p>
-			<Button
-				onClick={() => {
-					setCounter((prevState) => ({
-						value: prevState.value + 1,
-						prevValue: prevState.value,
-					}));
-				}}
-			>
-				i++
-			</Button>
-			<hr />
-			<button>i++</button>
+			{state.words.map((word) => (
+				<section key={word.word}>
+					<h3>{word.word}</h3>
+					<ul>
+						{word.translations.map((translation) => (
+							<li key={translation}>{translation}</li>
+						))}
+					</ul>
+				</section>
+			))}
 		</main>
 	);
 };

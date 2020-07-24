@@ -1,21 +1,17 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { CounterContext } from '../../App';
 
 const Header = () => {
 	const [addWordOpen, setAddWordOpen] = useState(false);
-	const [counter] = useContext(CounterContext);
 
 	return (
 		<header className="header">
 			<div className="header-title">
 				<span className="header-title-text">new words</span>
-				<span className="header-title-caption">
-					{counter.value} new words today
-				</span>
+				<span className="header-title-caption">{12} new words today</span>
 			</div>
 			<div className="header-actions">
 				<span>

@@ -1,33 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './AddWord.css';
 import Button from '../UI/Button';
 import DropDown from '../UI/DropDown/DropDown';
 import Input from '../UI/Input/Input';
+import { WordsContext } from '../../context/WordsContext';
 
 const AddWord = (props) => {
-	const [word, setWord] = useState('word');
-	const [translation, setTranslation] = useState('desktop');
+	const [word, setWord] = useState('');
+	const [translations, setTranslations] = useState(['']);
+	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [state, dispatch] = useContext(WordsContext);
 
 	const valueChangeHandler = (ev) => {
-		if (ev.target.name === 'word') {
-			setWord(ev.target.value);
+		const { value, name } = ev.target;
+		if (name === 'word') {
+			setWord(value);
 		} else {
-			setTranslation(ev.target.value);
+			const idx = +name.split('-')[1];
+			setTranslations((prevState) => {
+				const updatedState = [...prevState];
+				if (updatedState[idx] !== undefined) {
+					updatedState[idx] = value;
+				} else {
+					updatedState.push(value);
+				}
+				return updatedState;
+			});
 		}
 	};
 
-	const cancelHandler = () => {
-		setLoading(false);
+	const cancelHandler = () => closePanel();
+
+	const closePanel = () => {
 		props.onClose();
+		setError(null);
+		setWord('');
+		setTranslations(['']);
 	};
 
-	const submitHandler = (ev) => {
+	const addWord = (word, translations) =>
+		new Promise((resolve, reject) => {
+			setTimeout(() => {
+				dispatch({
+					type: 'ADD_WORD',
+					payload: {
+						word,
+						translations,
+					},
+				});
+				resolve();
+			}, 2000);
+		});
+
+	const submitHandler = async (ev) => {
+		const newWord = word.trim();
+		if (
+			state.words.findIndex((x) => x.word.toLowerCase() === newWord.toLowerCase()) >
+			-1
+		) {
+			return setError('Word exists');
+		}
+		const newWordTranslations = [];
+		for (let i = 0; i < translations.length; i++) {
+			const wordTranslation = translations[i].trim();
+			if (
+				wordTranslation !== '' &&
+				newWordTranslations.findIndex(
+					(x) => x.toLowerCase() === wordTranslation.toLowerCase()
+				) === -1
+			) {
+				newWordTranslations.push(wordTranslation);
+			}
+		}
+
+		if (newWordTranslations.length === 0) {
+			return setError('Enter at least one translation');
+		}
+
+		setError(null);
 		setLoading(true);
-		setTimeout(() => {
-			props.onClose();
+
+		try {
+			await addWord(newWord, translations);
+			closePanel();
+		} catch (err) {
+			setError(err.toString());
 			setLoading(false);
-		}, 1000);
+		}
 	};
 
 	return (
@@ -35,22 +95,52 @@ const AddWord = (props) => {
 			<Input
 				name="word"
 				value={word}
+				autoComplete={'false'}
+				autoCorrect={'false'}
+				autoCapitalize={'false'}
 				onChange={valueChangeHandler}
 				placeholder="Enter word"
 			/>
-			<Input
-				name="translation"
-				value={translation}
-				onChange={valueChangeHandler}
-				placeholder="Enter translation"
-			/>
+			<fieldset>
+				<label className="add-word-translations-label">Translations</label>
+				{translations.map((value, i) => (
+					<span key={i} className="add-word-translations-inp-wrapper">
+						<Input
+							autoComplete={'false'}
+							autoCorrect={'false'}
+							autoCapitalize={'false'}
+							name={'translation-' + i}
+							value={value}
+							onChange={valueChangeHandler}
+						/>
+						<Button
+							onClick={() =>
+								setTranslations((prevState) => {
+									if (translations.length - 1 === i) {
+										return prevState.concat('');
+									} else {
+										const updatedState = [...prevState];
+										updatedState.splice(i, 1);
+										return updatedState;
+									}
+								})
+							}
+						>
+							{translations.length - 1 === i ? '+' : '-'}
+						</Button>
+					</span>
+				))}
+			</fieldset>
 			<div className="add-word-actions">
-				<Button btnType="danger" onClick={cancelHandler}>
+				<Button btnType="danger" onClick={cancelHandler} disabled={loading}>
 					Cancel
 				</Button>
 				<Button btnType="success" onClick={submitHandler} loading={loading}>
-					Add
+					Save
 				</Button>
+			</div>
+			<div>
+				<p>{error}</p>
 			</div>
 		</DropDown>
 	);

@@ -11,3 +11,14 @@
 .add-word-actions button:first-child {
 	margin-right: 16px;
 }
+
+.add-word-translations-label {
+	display: inline-block;
+}
+
+.add-word-translations-inp-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
