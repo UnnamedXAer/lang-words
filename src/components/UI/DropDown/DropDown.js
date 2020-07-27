@@ -2,11 +2,11 @@ import React, { useRef, useEffect } from 'react';
 import './DropDown.css';
 
 const DropDown = ({ open, children, onClose, className }) => {
-	const ref = useRef(null);
+	const dropDownRef = useRef(null);
 
 	useEffect(() => {
 		const clickOutsideHandler = (ev) => {
-			if (ref.current && !ref.current.contains(ev.target)) {
+			if (dropDownRef.current && !dropDownRef.current.contains(ev.target)) {
 				onClose();
 			}
 		};
@@ -17,23 +17,22 @@ const DropDown = ({ open, children, onClose, className }) => {
 				onClose();
 			}
 		};
-		const element = ref.current;
+
 		if (open) {
 			document.addEventListener('click', clickOutsideHandler);
-			element.addEventListener('keypress', keyPressHandler);
+			document.addEventListener('keyup', keyPressHandler);
 		}
 
 		return () => {
 			document.removeEventListener('click', clickOutsideHandler);
-			element.addEventListener('keypress', keyPressHandler);
+			document.removeEventListener('keyup', keyPressHandler);
 		};
 	}, [onClose, open]);
 
 	return (
 		<div
 			tabIndex={1}
-			
-			ref={ref}
+			ref={dropDownRef}
 			className={['drop-down', open ? 'drop-down-open' : '', className].join(' ')}
 		>
 			{children}

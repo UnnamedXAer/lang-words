@@ -5,6 +5,7 @@ import Spinner from './Spinner/Spinner';
 const Button = (props) => {
 	return (
 		<button
+			title={props.title}
 			disabled={props.disabled || props.loading}
 			className={['button', props.btnType, props.className].join(' ')}
 			onClick={props.onClick}

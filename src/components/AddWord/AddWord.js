@@ -1,16 +1,23 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import './AddWord.css';
 import Button from '../UI/Button';
 import DropDown from '../UI/DropDown/DropDown';
 import Input from '../UI/Input/Input';
 import { WordsContext } from '../../context/WordsContext';
 
-const AddWord = (props) => {
+const AddWord = ({ open, onClose }) => {
 	const [word, setWord] = useState('');
 	const [translations, setTranslations] = useState(['']);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [state, dispatch] = useContext(WordsContext);
+	const wordInpRef = useRef(null);
+
+	useEffect(() => {
+		if (open) {
+			wordInpRef.current.focus();
+		}
+	}, [open]);
 
 	const valueChangeHandler = (ev) => {
 		const { value, name } = ev.target;
@@ -33,7 +40,7 @@ const AddWord = (props) => {
 	const cancelHandler = () => closePanel();
 
 	const closePanel = () => {
-		props.onClose();
+		onClose();
 		setError(null);
 		setWord('');
 		setTranslations(['']);
@@ -91,10 +98,11 @@ const AddWord = (props) => {
 	};
 
 	return (
-		<DropDown className="add-word" open={props.open} onClose={props.onClose}>
+		<DropDown className="add-word" open={open} onClose={onClose}>
 			<Input
 				name="word"
 				value={word}
+				ref={wordInpRef}
 				autoComplete={'false'}
 				autoCorrect={'false'}
 				autoCapitalize={'false'}
