@@ -32,7 +32,6 @@ const Header = () => {
 						<AddWord
 							open={addWordOpen}
 							onClose={() => {
-								console.log('onClose');
 								setAddWordOpen(false);
 							}}
 						/>

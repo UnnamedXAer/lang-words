@@ -5,11 +5,11 @@ const SideDrawer = () => {
 	return (
 		<div className="side-drawer">
 			<div className="side-drawer-header">
-				<img
+				{/* <img
 					style={{ maxWidth: '100%', maxHeight: '100%' }}
 					src="https://abc.jpg"
 					alt="lang word"
-				/>
+				/> */}
 			</div>
 			<nav>
 				<ul>

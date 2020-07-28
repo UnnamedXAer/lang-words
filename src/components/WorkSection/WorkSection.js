@@ -1,11 +1,11 @@
 import React from 'react';
 import './WorkSection.css';
-import WordsList from '../WordsList/WordsList';
+import Words from '../Words/Words';
 
 const WorkSection = () => {
 	return (
 		<main className="work-section">
-			<WordsList />
+			<Words />
 		</main>
 	);
 };

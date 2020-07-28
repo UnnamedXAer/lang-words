@@ -16,6 +16,8 @@
 	--bg-header: #2a2f32;
 	--bg-footer: #2a2f32;
 	--bg-drawer: #131c21;
+	--bg-backdrop: rgba(31.75, 39.01316, 43.25, 0.7);
+	--bg-dialog: #20272b;
 	--bg-work-section: #0d1418;
 	--bg-drop-down: #2a2f32;
 	--bg-input: #33383b;
@@ -151,4 +153,10 @@ body {
 
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+#dialog-root {
+	width: 0;
+	height: 0;
+	background: transparent;
 }

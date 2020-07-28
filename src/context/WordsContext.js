@@ -44,11 +44,13 @@ const initialState = {
 			known: false,
 		},
 	],
+	knownWords: [],
 };
 
 export const WordsContextActions = {
 	ADD_WORD: 'ADD_WORD',
 	ACKNOWLEDGE_WORD: 'ACKNOWLEDGE_WORD',
+	MARK_AS_KNOWN_START: 'MARK_AS_KNOWN_START',
 	MARK_AS_KNOWN: 'MARK_AS_KNOWN',
 	UPDATE_WORD: 'UPDATE_WORD',
 	DELETE_WORD: 'DELETE_WORD',
@@ -59,7 +61,7 @@ const reducer = (state, action) => {
 		case WordsContextActions['ADD_WORD']: {
 			const { word, translations, id } = action.payload;
 			const updatedWords = state.words.concat({
-				id,
+				id: id || Math.round().toString(),
 				word,
 				translations: [...translations],
 				createAt: new Date(),
@@ -83,22 +85,36 @@ const reducer = (state, action) => {
 
 			return { ...state, words: updatedWords };
 		}
-		case WordsContextActions['MARK_AS_KNOWN']: {
+		case WordsContextActions['MARK_AS_KNOWN_START']: {
 			const { id } = action.payload;
 			const updatedWords = [...state.words];
 			const idx = updatedWords.findIndex((x) => x.id === id);
 			updatedWords[idx] = {
 				...updatedWords[idx],
+				collapse: true,
 				known: true,
 			};
 
 			return { ...state, words: updatedWords };
 		}
-		case WordsContextActions['UPDATE_WORD']: {
-			const { word } = action.payload;
+		case WordsContextActions['MARK_AS_KNOWN']: {
+			const { id } = action.payload;
+			const idx = state.words.findIndex((x) => x.id === id);
+			const updatedKnownWords = [...state.knownWords];
 			const updatedWords = [...state.words];
-			const idx = updatedWords.findIndex((x) => x.id === word.id);
-			updatedWords[idx] = { ...word };
+			if (idx > -1) {
+				const word = state.words[idx];
+				updatedKnownWords.push(word);
+				updatedWords.splice(idx, 1);
+			}
+
+			return { ...state, words: updatedWords, knownWords: updatedKnownWords };
+		}
+		case WordsContextActions['UPDATE_WORD']: {
+			const { word, translations, id } = action.payload;
+			const updatedWords = [...state.words];
+			const idx = updatedWords.findIndex((x) => x.id === id);
+			updatedWords[idx] = { ...updatedWords[idx], word, translations };
 			return { ...state, words: updatedWords };
 		}
 		case WordsContextActions['DELETE_WORD']: {

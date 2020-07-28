@@ -3,8 +3,9 @@ import './WordsListItem.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Card from '../../UI/Card/Card';
 import Button from '../../UI/Button';
+import Spinner from '../../UI/Spinner/Spinner';
 
-const WordListItem = ({ word, actions }) => {
+const WordListItem = ({ word, actions, loading }) => {
 	return (
 		<Card className={word.collapse ? 'words-list-item-hide' : ''}>
 			<div className="words-list-item">
@@ -27,8 +28,13 @@ const WordListItem = ({ word, actions }) => {
 							key={action.icon}
 							title={action.title}
 							onClick={() => action.action(word.id)}
+							disabled={loading}
 						>
-							<FontAwesomeIcon icon={action.icon} />
+							{loading ? (
+								<Spinner size="small" />
+							) : (
+								<FontAwesomeIcon icon={action.icon} />
+							)}
 						</Button>
 					))}
 				</div>
