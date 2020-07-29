@@ -149,6 +149,7 @@ body {
 
 	background-color: var(--bg-main);
 	color: var(--color-main);
+	overflow: hidden;
 }
 
 code {

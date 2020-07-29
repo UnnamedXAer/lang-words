@@ -25,6 +25,7 @@ const Header = () => {
 						title="Add word"
 						onClick={() => setAddWordOpen(true)}
 						disabled={addWordOpen}
+						style={{ cursor: 'pointer' }}
 					>
 						<FontAwesomeIcon icon="plus" size="lg" />
 					</Button>

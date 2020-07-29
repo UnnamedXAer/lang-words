@@ -124,9 +124,6 @@ const Words = () => {
 		setEditLoading(true);
 		try {
 			await editWord(editedWord.id, sanitizedWord.word, sanitizedWord.translations);
-			if (isMounted.current) {
-				setEditedWord(null);
-			}
 		} catch (err) {
 			if (isMounted.current) {
 				setEditError(err.message);
@@ -173,6 +170,7 @@ const Words = () => {
 				onClose={() => setOpenEdit(false)}
 				title="Edit word"
 				error={editError}
+				onExited={() => setEditedWord(null)}
 				content={
 					<EditWordForm
 						onWordUpdate={wordUpdateHandler}
@@ -183,6 +181,7 @@ const Words = () => {
 				actions={[
 					{
 						label: 'Save',
+						btnType: 'success',
 						action: saveEditedWordHandler,
 						loading: editLoading,
 					},

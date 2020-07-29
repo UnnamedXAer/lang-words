@@ -1,23 +1,29 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import './DropDown.css';
 
 const DropDown = ({ open, children, onClose, className }) => {
 	const dropDownRef = useRef(null);
 
-	useEffect(() => {
-		const clickOutsideHandler = (ev) => {
+	const clickOutsideHandler = useCallback(
+		(ev) => {
 			if (dropDownRef.current && !dropDownRef.current.contains(ev.target)) {
 				onClose();
 			}
-		};
+		},
+		[onClose]
+	);
 
-		const keyPressHandler = (ev) => {
+	const keyPressHandler = useCallback(
+		(ev) => {
 			console.log(ev.keyCode);
 			if (ev.keyCode === 27) {
 				onClose();
 			}
-		};
+		},
+		[onClose]
+	);
 
+	useEffect(() => {
 		if (open) {
 			document.addEventListener('click', clickOutsideHandler);
 			document.addEventListener('keyup', keyPressHandler);
@@ -27,7 +33,7 @@ const DropDown = ({ open, children, onClose, className }) => {
 			document.removeEventListener('click', clickOutsideHandler);
 			document.removeEventListener('keyup', keyPressHandler);
 		};
-	}, [onClose, open]);
+	}, [clickOutsideHandler, keyPressHandler, open]);
 
 	return (
 		<div

@@ -8,6 +8,7 @@ const Button = (props) => {
 			title={props.title}
 			disabled={props.disabled || props.loading}
 			className={['button', props.btnType, props.className].join(' ')}
+			style={props.style}
 			onClick={props.onClick}
 		>
 			{props.loading && (
