@@ -1,19 +1,20 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import './Words.css';
 import WordsList from '../WordsList/WordsList';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
-import Dialog from '../UI/Dialog/Dialog';
+import Dialog, { getInitialDialogData } from '../UI/Dialog/Dialog';
 import EditWordForm from '../EditWordForm/EditWordForm';
 import { sanitizeWord } from '../../utils/wordValidator';
+import Snackbar from '../UI/Snackbar/Snackbar';
 
 const Words = () => {
-	const [state, dispatch] = useContext(WordsContext);
+	const [{ words, wordsMarkedAsNew, wordsMarkedAsDeleted }, dispatch] = useContext(
+		WordsContext
+	);
 	const [loadingWords, setLoadingWords] = useState({});
-	const [actionError, setActionError] = useState(null);
-	const [openEdit, setOpenEdit] = useState(false);
-	const [editLoading, setEditLoading] = useState(false);
-	const [editError, setEditError] = useState(null);
+	const [actionError, setActionError] = useState('error');
 	const [editedWord, setEditedWord] = useState(null);
+	const [dialogData, setDialogData] = useState(getInitialDialogData());
 
 	const isMounted = useRef(false);
 	useEffect(() => {
@@ -24,19 +25,106 @@ const Words = () => {
 	}, []);
 
 	const deleteHandler = (id) => {
-		const sure = window.confirm('sure to delete>, ' + id);
-		if (sure) {
+		setDialogData({
+			open: true,
+			loading: false,
+			error: null,
+			title: 'Delete word',
+			content: (
+				<p>
+					Are you sure you want to delete{' '}
+					<strong>{words.find((x) => x.id === id).word}</strong>
+				</p>
+			),
+			actions: [
+				{
+					label: 'Yes',
+					btnType: 'success',
+					action: () => deleteWord(id),
+				},
+				{
+					label: 'Cancel',
+					btnType: 'danger',
+					action: closeDialog,
+				},
+			],
+			onClose: closeDialog,
+		});
+	};
+
+	const deleteWord = async (id) => {
+		setActionError(null);
+		closeDialog();
+		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
+		try {
+			await asyncFunc(1200, 0, 0);
 			dispatch({
-				type: WordsContextActions.DELETE_WORD,
+				type: WordsContextActions.DELETE_WORD_START,
 				payload: { id },
 			});
+			if (isMounted.current) {
+				setTimeout(() => {
+					if (isMounted.current) {
+						setLoadingWords((prevState) => ({
+							...prevState,
+							[id]: false,
+						}));
+					}
+					dispatch({
+						type: WordsContextActions.DELETE_WORD,
+						payload: { id },
+					});
+				}, 500);
+			} else {
+				dispatch({
+					type: WordsContextActions.DELETE_WORD,
+					payload: { id },
+				});
+			}
+		} catch (err) {
+			if (isMounted.current) {
+				setActionError(err.message);
+				setLoadingWords((prevState) => ({
+					...prevState,
+					[id]: false,
+				}));
+			}
 		}
 	};
 
+	const closeDialog = () =>
+		setDialogData((prevState) => ({ ...prevState, open: false }));
+
 	const editHandler = (id) => {
-		const word = state.words.find((x) => x.id === id);
+		const word = words.find((x) => x.id === id);
 		setEditedWord(word);
-		setOpenEdit(true);
+		setDialogData({
+			open: true,
+			loading: false,
+			error: null,
+			title: 'Edit word',
+			content: (
+				<EditWordForm
+					onWordUpdate={wordUpdateHandler}
+					update={true}
+					word={word}
+				/>
+			),
+			actions: [
+				{
+					label: 'Save',
+					btnType: 'success',
+					action: saveEditedWordHandler,
+				},
+				{
+					label: 'Cancel',
+					btnType: 'danger',
+					action: closeDialog,
+				},
+			],
+			onClose: closeDialog,
+			onExited: setDialogData(getInitialDialogData()),
+		});
 	};
 
 	const markAsKnownHandler = async (id) => {
@@ -80,16 +168,14 @@ const Words = () => {
 		}
 	};
 
-	const asyncFunc = (
-		timeout = 1000,
-		func = (t) => {
-			console.log('timeout executed', t);
-		},
-		shouldReject = false
-	) =>
-		new Promise((resolve, reject) => {
+	const asyncFunc = (timeout = 1000, func, shouldReject = false) => {
+		return new Promise((resolve, reject) => {
 			const t = setTimeout(() => {
-				func(t);
+				typeof func === 'function'
+					? func()
+					: ((t) => {
+							console.log('timeout executed', t);
+					  })(t);
 				if (shouldReject) {
 					reject(new Error('Async rejected :('));
 				} else {
@@ -97,12 +183,23 @@ const Words = () => {
 				}
 			}, timeout);
 		});
+	};
 
-	const acknowledgeHandler = (id) => {
-		dispatch({
-			type: WordsContextActions.ACKNOWLEDGE_WORD,
-			payload: { id },
-		});
+	const acknowledgeHandler = async (id) => {
+		setActionError(null);
+		setLoadingWords((pS) => ({ ...pS, [id]: true }));
+		try {
+			await asyncFunc(111, 0, 1);
+			dispatch({
+				type: WordsContextActions.ACKNOWLEDGE_WORD,
+				payload: { id },
+			});
+		} catch (err) {
+			setActionError(err.message);
+		}
+		if (isMounted.current) {
+			setLoadingWords((pS) => ({ ...pS, [id]: false }));
+		}
 	};
 
 	const wordUpdateHandler = (word, translations) => {
@@ -113,42 +210,64 @@ const Words = () => {
 		}));
 	};
 
-	const saveEditedWordHandler = async () => {
-		setEditError(null);
+	const editWord = useCallback(
+		(id, word, translations) =>
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					dispatch({
+						type: WordsContextActions.UPDATE_WORD,
+						payload: {
+							id,
+							word,
+							translations,
+						},
+					});
+					resolve();
+				}, 2000);
+			}),
+		[dispatch]
+	);
+
+	const saveEditedWordHandler = useCallback(async () => {
 		let sanitizedWord;
 		try {
 			sanitizedWord = sanitizeWord(editedWord.word, editedWord.translations);
 		} catch (err) {
-			return setEditError(err.message);
+			return setDialogData((prevState) => ({ ...prevState, error: err.message }));
 		}
-		setEditLoading(true);
+		setDialogData((prevState) => ({ ...prevState, loading: true, error: null }));
 		try {
 			await editWord(editedWord.id, sanitizedWord.word, sanitizedWord.translations);
 		} catch (err) {
 			if (isMounted.current) {
-				setEditError(err.message);
+				setDialogData((prevState) => ({ ...prevState, error: err.message }));
 			}
 		}
 		if (isMounted) {
-			setOpenEdit(false);
-			setEditLoading(false);
+			closeDialog();
+			setEditedWord(null);
 		}
-	};
+	}, [editWord, editedWord]);
 
-	const editWord = (id, word, translations) =>
-		new Promise((resolve, reject) => {
-			setTimeout(() => {
-				dispatch({
-					type: WordsContextActions.UPDATE_WORD,
-					payload: {
-						id,
-						word,
-						translations,
+	useEffect(() => {
+		if (editedWord) {
+			setDialogData((prevState) => ({
+				...prevState,
+				actions: [
+					{
+						label: 'Save',
+						btnType: 'success',
+						action: saveEditedWordHandler,
 					},
-				});
-				resolve();
-			}, 2000);
-		});
+					{
+						label: 'Cancel',
+						btnType: 'danger',
+						action: closeDialog,
+					},
+				],
+			}));
+		}
+	}, [editedWord, saveEditedWordHandler]);
 
 	const actions = [
 		{ title: 'Edit word', icon: 'edit', action: editHandler },
@@ -159,40 +278,21 @@ const Words = () => {
 
 	return (
 		<>
-			{actionError && <div className="errorPanel">{actionError}</div>}
+			<Snackbar
+				data={{
+					onClose: () => setActionError(null),
+					open: actionError !== null,
+					content: actionError,
+				}}
+			/>
 			<WordsList
-				words={state.words}
+				words={words}
+				wordsMarkedAsNew={wordsMarkedAsNew}
+				wordsMarkedAsDeleted={wordsMarkedAsDeleted}
 				actions={actions}
 				loadingWords={loadingWords}
 			/>
-			<Dialog
-				open={openEdit}
-				onClose={() => setOpenEdit(false)}
-				title="Edit word"
-				error={editError}
-				onExited={() => setEditedWord(null)}
-				content={
-					<EditWordForm
-						onWordUpdate={wordUpdateHandler}
-						update={openEdit}
-						word={editedWord}
-					/>
-				}
-				actions={[
-					{
-						label: 'Save',
-						btnType: 'success',
-						action: saveEditedWordHandler,
-						loading: editLoading,
-					},
-					{
-						label: 'Cancel',
-						btnType: 'danger',
-						action: () => setOpenEdit(false),
-						disabled: editLoading,
-					},
-				]}
-			/>
+			<Dialog data={dialogData} />
 		</>
 	);
 };

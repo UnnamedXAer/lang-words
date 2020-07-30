@@ -27,15 +27,21 @@
 	--color-light: rgba(241, 241, 242, 0.96);
 	--color-main: rgba(241, 241, 242, 0.92);
 	--color-dark: #b1b3b5;
+	--reject-rgb: 229, 75, 64;
+	--reject: #e54b40;
 	--border: rgb(36, 45, 50);
 	--border-stronger: rgba(241, 241, 242, 0.11);
 	--shadow: #000;
 	--shadow-rgb: 0, 0, 0;
 
+	--button-success-rgb: 0, 150, 136;
 	--button-success: #009688;
+	--button-danger-rgb: 239, 105, 122;
 	--button-danger: #ef697a;
 	--button-disabled: #999;
 	--button-hover: #222527;
+
+	--radius-small: 3px;
 }
 
 *::before,
@@ -135,6 +141,7 @@ ul {
 button,
 [role='button'] {
 	cursor: pointer;
+	font-family: var(--font-family);
 }
 
 button:disabled,
@@ -156,7 +163,8 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-#dialog-root {
+#dialog-root,
+#backdrop-root {
 	width: 0;
 	height: 0;
 	background: transparent;

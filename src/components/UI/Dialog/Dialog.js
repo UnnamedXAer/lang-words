@@ -1,61 +1,98 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import './Dialog.css';
 import ReactDOM from 'react-dom';
 import { Transition } from 'react-transition-group';
 import Button from '../Button';
+import Spinner from '../Spinner/Spinner';
+import Backdrop from '../Backdrop/Backdrop';
 
 const dialogRoot = document.getElementById('dialog-root');
 
-const Dialog = ({ open, content, title, actions, onClose, error, onExited }) => {
-	const backdropRef = useRef(null);
+export const getInitialDialogData = () => ({
+	open: false,
+	error: null,
+	loading: false,
+	title: null,
+	content: null,
+	actions: null,
+	onClose: void 0,
+	onExited: void 0,
+});
 
-	return ReactDOM.createPortal(
-		<Transition
-			timeout={150}
-			in={open}
-			mountOnEnter
-			unmountOnExit
-			onExited={onExited}
-			appear
-			nodeRef={backdropRef}
-		>
-			{(status) => {
-				return (
-					<div
-						className={['dialog-backdrop', ' dialog-backdrop-', status].join(
-							''
-						)}
-						onClose={onClose}
-					>
-						<div className={['dialog', ' dialog-', status].join('')}>
-							<div className="dialog-title">{title}</div>
-							<hr />
-							<div className="dialog-content">{content}</div>
-							<hr />
-							{error && <div className="dialog-error">{error}</div>}
-							<div className="dialog-actions">
-								{actions ? (
-									actions.map((action) => (
-										<Button
-											key={action.label}
-											btnType={action.btnType}
-											onClick={action.action}
-											disabled={action.disabled}
-											loading={action.loading}
-										>
-											{action.label}
-										</Button>
-									))
-								) : (
-									<Button>OK</Button>
-								)}
+const Dialog = ({ data }) => {
+	const {
+		open,
+		error,
+		loading,
+		disabled,
+		title,
+		content,
+		actions,
+		onClose,
+		onExited,
+	} = data;
+	const ref = useRef(null);
+
+	return (
+		<>
+			<Backdrop onClose={onClose} open={open} timeout={200} />
+			{ReactDOM.createPortal(
+				<Transition
+					timeout={200}
+					in={open}
+					mountOnEnter
+					unmountOnExit
+					onExited={onExited}
+					appear
+					nodeRef={ref}
+				>
+					{(status) => {
+						return (
+							<div
+								role="dialog"
+								ref={ref}
+								className={[
+									'dialog-backdrop',
+									// , ' dialog-backdrop-', status
+								].join('')}
+							>
+								<div
+									// ref={backdropRef}
+									className={['dialog', ' dialog-', status].join('')}
+								>
+									<div className="dialog-title">{title}</div>
+									<hr />
+									<div className="dialog-content">{content}</div>
+									<hr />
+									{error && <div className="dialog-error">{error}</div>}
+									<div className="dialog-actions">
+										{actions ? (
+											<>
+												{loading && <Spinner size="small" />}
+												{actions.map((action) => (
+													<Button
+														key={action.label}
+														btnType={action.btnType}
+														onClick={action.action}
+														disabled={disabled || loading}
+														// loading={loading}
+													>
+														{action.label}
+													</Button>
+												))}
+											</>
+										) : (
+											<Button>OK</Button>
+										)}
+									</div>
+								</div>
 							</div>
-						</div>
-					</div>
-				);
-			}}
-		</Transition>,
-		dialogRoot
+						);
+					}}
+				</Transition>,
+				dialogRoot
+			)}
+		</>
 	);
 };
 

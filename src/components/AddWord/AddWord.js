@@ -3,7 +3,7 @@ import './AddWord.css';
 import DropDown from '../UI/DropDown/DropDown';
 import EditWordForm from '../EditWordForm/EditWordForm';
 import Button from '../UI/Button';
-import { WordsContext } from '../../context/WordsContext';
+import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { sanitizeWord } from '../../utils/wordValidator';
 
 const AddWord = ({ open, onClose }) => {
@@ -24,15 +24,34 @@ const AddWord = ({ open, onClose }) => {
 	const addWord = (word, translations) =>
 		new Promise((resolve, reject) => {
 			setTimeout(() => {
+				const newWord = {
+					id: Math.round(Math.random() * 1000000000000000).toString(),
+					word,
+					translations: [...translations],
+					createAt: new Date(),
+					acknowledges: [],
+					known: false,
+				};
+				document
+					.querySelector('.work-section')
+					.scroll({ top: 0, left: 0, behavior: 'smooth' });
 				dispatch({
-					type: 'ADD_WORD',
+					type: WordsContextActions.ADD_WORD,
 					payload: {
-						word,
-						translations,
+						word: newWord,
 					},
 				});
+				setTimeout(() => {
+					dispatch({
+						type: WordsContextActions.SET_MARKED_AS_NEW,
+						payload: {
+							id: newWord.id,
+							isNew: false,
+						},
+					});
+				}, 600);
 				resolve();
-			}, 2000);
+			}, 1000);
 		});
 
 	const submitHandler = async (ev) => {

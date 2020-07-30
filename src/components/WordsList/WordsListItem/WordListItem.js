@@ -5,9 +5,18 @@ import Card from '../../UI/Card/Card';
 import Button from '../../UI/Button';
 import Spinner from '../../UI/Spinner/Spinner';
 
-const WordListItem = ({ word, actions, loading }) => {
+const WordListItem = ({ word, isNew, isDeleted, actions, loading }) => {
 	return (
-		<Card className={word.collapse ? 'words-list-item-hide' : ''}>
+		<Card
+			className={[
+				word.collapse
+					? `words-list-item-hide words-list-item-hide-${
+							isDeleted ? 'danger' : 'success'
+					  }`
+					: '',
+				isNew ? 'word-list-item-new' : '',
+			].join(' ')}
+		>
 			<div className="words-list-item">
 				<div className="words-list-item-content">
 					<div className="words-list-item-header">

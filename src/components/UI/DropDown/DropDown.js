@@ -37,6 +37,7 @@ const DropDown = ({ open, children, onClose, className }) => {
 
 	return (
 		<div
+			role="dialog"
 			tabIndex={1}
 			ref={dropDownRef}
 			className={['drop-down', open ? 'drop-down-open' : '', className].join(' ')}

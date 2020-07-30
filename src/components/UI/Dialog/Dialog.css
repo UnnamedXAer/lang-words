@@ -1,6 +1,7 @@
 .dialog {
 	max-height: 90vh;
 	max-width: 90vw;
+	z-index: 1010;
 	padding: 16px;
 	border: 1px solid var(--border);
 	background: var(--bg-dialog);
@@ -12,14 +13,14 @@
 }
 
 .dialog-entering {
-	animation: dialog-open ease 150ms forwards;
+	animation: dialog-open ease 200ms forwards;
 }
 .dialog-entered {
-	animation: dialog-open ease 150ms forwards;
+	animation: dialog-open ease 200ms forwards;
 }
 
 .dialog-exiting {
-	animation: dialog-close ease 150ms forwards;
+	animation: dialog-close ease 200ms forwards;
 }
 
 @keyframes dialog-open {
@@ -55,7 +56,6 @@
 
 .dialog-backdrop {
 	position: absolute;
-	z-index: 1000;
 	top: 0;
 	left: 0;
 	width: 100vw;
@@ -63,38 +63,5 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--bg-backdrop);
-}
-
-.dialog-backdrop-entering {
-	animation: dialog-backdrop-open ease 150ms forwards;
-}
-
-.dialog-backdrop-entered {
-	animation: dialog-backdrop-open ease 150ms forwards;
-}
-
-.dialog-backdrop-exiting {
-	animation: dialog-backdrop-close ease 150ms forwards;
-}
-
-@keyframes dialog-backdrop-open {
-	from {
-		opacity: 0;
-	}
-	70% {
-		opacity: 1;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-@keyframes dialog-backdrop-close {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0.2;
-	}
+	background-color: transparent;
 }

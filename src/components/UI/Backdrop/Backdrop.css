@@ -3,11 +3,44 @@
 	z-index: 1000;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	width: 100vw;
+	height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: var(--bg-backdrop);
+	/* background-color: transparent; */
+}
 
-	background-color: var(--backdrop);
+.backdrop-entering {
+	animation: backdrop-open ease 150ms forwards;
+}
+
+.backdrop-entered {
+	animation: backdrop-open ease 150ms forwards;
+}
+
+.backdrop-exiting {
+	animation: backdrop-close ease 150ms forwards;
+}
+
+@keyframes backdrop-open {
+	from {
+		opacity: 0;
+	}
+	70% {
+		opacity: 1;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes backdrop-close {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0.2;
+	}
 }
