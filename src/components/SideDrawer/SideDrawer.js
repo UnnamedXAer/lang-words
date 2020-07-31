@@ -11,11 +11,10 @@ const SideDrawer = () => {
 					alt="lang word"
 				/> */}
 			</div>
-			<nav>
+			<nav className="drawer-navigation">
 				<ul>
-					<li>new words</li>
-					<li>words</li>
-					<li>known words</li>
+					<li className="drawer-navigation-item">Words</li>
+					<li className="drawer-navigation-item">Known Words</li>
 				</ul>
 			</nav>
 		</div>

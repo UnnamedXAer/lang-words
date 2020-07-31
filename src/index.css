@@ -22,7 +22,9 @@
 	--bg-drop-down: #2a2f32;
 	--bg-input: #33383b;
 	--bg-button: transparent;
-	/* --bg-button: #323b41; */
+
+	--drawer-hover: #2d3134;
+	--drawer-active: #323739;
 
 	--color-light: rgba(241, 241, 242, 0.96);
 	--color-main: rgba(241, 241, 242, 0.92);
