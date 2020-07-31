@@ -5,18 +5,18 @@ import EditWordForm from '../EditWordForm/EditWordForm';
 import Button from '../UI/Button';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { sanitizeWord } from '../../utils/wordValidator';
+import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
 
 const AddWord = ({ open, onClose }) => {
-	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [state, dispatch] = useContext(WordsContext);
 	const [word, setWord] = useState({ word: '', translations: [''] });
+	const [snackbarData, setSnackbarData] = useState(getInitialSnackbarData());
 
 	const cancelHandler = () => closePanel();
 
 	const closePanel = () => {
 		onClose();
-		setError(null);
 		setLoading(false);
 		setWord({ word: '', translations: [''] });
 	};
@@ -54,52 +54,63 @@ const AddWord = ({ open, onClose }) => {
 			}, 1000);
 		});
 
+	const showSnackbarMessage = (msg, severity = 'error') =>
+		setSnackbarData({
+			open: true,
+			severity: severity,
+			onClose: () =>
+				setSnackbarData((prevState) => ({ ...prevState, open: false })),
+			onExited: () => setSnackbarData(getInitialSnackbarData()),
+			content: msg,
+		});
+
 	const submitHandler = async (ev) => {
-		setError(null);
+		setSnackbarData((prevState) => ({ ...prevState, open: false }));
 		if (
 			state.words.find(
 				(x) => x.word.toLowerCase() === word.word.trim().toLowerCase()
 			)
 		) {
-			return setError('Word already exists');
+			return showSnackbarMessage('Word already exists', 'warning');
 		}
 		let sanitizedWord;
 		try {
 			sanitizedWord = sanitizeWord(word.word, word.translations);
 		} catch (err) {
-			return setError(err.message);
+			return showSnackbarMessage(err.message);
 		}
 		setLoading(true);
 		try {
 			await addWord(sanitizedWord.word, sanitizedWord.translations);
+			showSnackbarMessage('Word added', 'success');
 			closePanel();
 		} catch (err) {
-			setError(err.message);
 			setLoading(false);
+			return showSnackbarMessage(err.message);
 		}
 	};
 
 	return (
-		<DropDown className="add-word" open={open} onClose={closePanel}>
-			<EditWordForm
-				update={open}
-				word={word}
-				onWordUpdate={(word, translations) => {
-					setWord({ word, translations: [...translations] });
-				}}
-			/>
-			<div className="add-word-actions">
-				<Button btnType="danger" onClick={cancelHandler} disabled={loading}>
-					Cancel
-				</Button>
-				<Button btnType="success" onClick={submitHandler} loading={loading}>
-					Save
-				</Button>
-			</div>
-			<div>
-				<p>{error}</p>
-			</div>
-		</DropDown>
+		<>
+			<DropDown className="add-word" open={open} onClose={closePanel}>
+				<EditWordForm
+					update={open}
+					word={word}
+					onWordUpdate={(word, translations) => {
+						setWord({ word, translations: [...translations] });
+					}}
+				/>
+				<div className="add-word-actions">
+					<Button btnType="danger" onClick={cancelHandler} disabled={loading}>
+						Cancel
+					</Button>
+					<Button btnType="success" onClick={submitHandler} loading={loading}>
+						Save
+					</Button>
+				</div>
+			</DropDown>
+			<Snackbar data={snackbarData} />
+		</>
 	);
 };
 
