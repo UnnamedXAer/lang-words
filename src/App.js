@@ -8,11 +8,26 @@ import {
 	faTrashAlt,
 	faCheck,
 	faCheckDouble,
+	faExclamationTriangle,
+	faExclamationCircle,
+	faTimesCircle,
+	faCheckCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import AppContent from './components/App/AppContent';
 import WordContextProvider from './context/WordsContext';
 
-library.add(faPlus, faCog, faEdit, faTrashAlt, faCheck, faCheckDouble);
+library.add(
+	faPlus,
+	faCog,
+	faEdit,
+	faTrashAlt,
+	faCheck,
+	faCheckDouble,
+	faTimesCircle,
+	faCheckCircle,
+	faExclamationTriangle,
+	faExclamationCircle,
+);
 
 function App() {
 	return (
