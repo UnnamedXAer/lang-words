@@ -1,16 +1,24 @@
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import './Words.css';
 import WordsList from '../WordsList/WordsList';
-import { WordsContext, WordsContextActions } from '../../context/WordsContext';
+import {
+	WordsContext,
+	WordsContextActions,
+	wordsExample,
+} from '../../context/WordsContext';
 import Dialog, { getInitialDialogData } from '../UI/Dialog/Dialog';
 import EditWordForm from '../EditWordForm/EditWordForm';
 import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar from '../UI/Snackbar/Snackbar';
+import Spinner from '../UI/Spinner/Spinner';
+import Alert from '../UI/Alert/Alert';
 
 const Words = () => {
-	const [{ words, wordsMarkedAsNew, wordsMarkedAsDeleted }, dispatch] = useContext(
-		WordsContext
-	);
+	const [
+		{ words, wordsMarkedAsNew, wordsMarkedAsDeleted, fetchingWords },
+		dispatch,
+	] = useContext(WordsContext);
+	const [error, setError] = useState(null);
 	const [loadingWords, setLoadingWords] = useState({});
 	const [actionError, setActionError] = useState('error');
 	const [editedWord, setEditedWord] = useState(null);
@@ -23,6 +31,27 @@ const Words = () => {
 			isMounted.current = false;
 		};
 	}, []);
+
+	useEffect(() => {
+		const loadWords = async () => {
+			setError(null);
+			try {
+				dispatch({
+					type: WordsContextActions.FETCH_WORDS_START,
+				});
+				await asyncFunc(1200);
+
+				dispatch({
+					type: WordsContextActions.FETCH_WORDS_FINISH,
+					payload: { words: wordsExample },
+				});
+			} catch (err) {
+				setError(err.message);
+			}
+		};
+
+		loadWords();
+	}, [dispatch]);
 
 	const deleteHandler = (id) => {
 		setDialogData({
@@ -127,43 +156,44 @@ const Words = () => {
 		});
 	};
 
-	const markAsKnownHandler = async (id) => {
-		const sure = window.confirm('sure to mark as known?, ' + id);
-		if (sure) {
-			setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
-			try {
-				await asyncFunc(1000);
-				dispatch({
-					type: WordsContextActions.MARK_AS_KNOWN_START,
-					payload: { id },
-				});
-				if (isMounted.current) {
-					setTimeout(() => {
-						if (isMounted.current) {
-							setLoadingWords((prevState) => ({
-								...prevState,
-								[id]: false,
-							}));
-						}
-						dispatch({
-							type: WordsContextActions.MARK_AS_KNOWN,
-							payload: { id },
-						});
-					}, 500);
-				} else {
+	const markAsKnownHandler = (id) => {
+		markAsKnown(id);
+	};
+
+	const markAsKnown = async (id) => {
+		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
+		try {
+			await asyncFunc(1000);
+			dispatch({
+				type: WordsContextActions.MARK_AS_KNOWN_START,
+				payload: { id },
+			});
+			if (isMounted.current) {
+				setTimeout(() => {
+					if (isMounted.current) {
+						setLoadingWords((prevState) => ({
+							...prevState,
+							[id]: false,
+						}));
+					}
 					dispatch({
 						type: WordsContextActions.MARK_AS_KNOWN,
 						payload: { id },
 					});
-				}
-			} catch (err) {
-				if (isMounted.current) {
-					setActionError(err.message);
-					setLoadingWords((prevState) => ({
-						...prevState,
-						[id]: false,
-					}));
-				}
+				}, 500);
+			} else {
+				dispatch({
+					type: WordsContextActions.MARK_AS_KNOWN,
+					payload: { id },
+				});
+			}
+		} catch (err) {
+			if (isMounted.current) {
+				setActionError(err.message);
+				setLoadingWords((prevState) => ({
+					...prevState,
+					[id]: false,
+				}));
 			}
 		}
 	};
@@ -278,20 +308,21 @@ const Words = () => {
 
 	return (
 		<>
-			<Snackbar
-				data={{
-					onClose: () => setActionError(null),
-					open: actionError !== null,
-					content: actionError,
-				}}
-			/>
-			<WordsList
-				words={words}
-				wordsMarkedAsNew={wordsMarkedAsNew}
-				wordsMarkedAsDeleted={wordsMarkedAsDeleted}
-				actions={actions}
-				loadingWords={loadingWords}
-			/>
+			{error ? (
+				<Alert onClick={() => setError(null)} severity="error">
+					{error}
+				</Alert>
+			) : fetchingWords ? (
+				<Spinner size="large" />
+			) : (
+				<WordsList
+					words={words}
+					wordsMarkedAsNew={wordsMarkedAsNew}
+					wordsMarkedAsDeleted={wordsMarkedAsDeleted}
+					actions={actions}
+					loadingWords={loadingWords}
+				/>
+			)}
 			<Dialog data={dialogData} />
 		</>
 	);

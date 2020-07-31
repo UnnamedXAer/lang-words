@@ -2,7 +2,13 @@ import React from 'react';
 import './WordsList.css';
 import WordListItem from './WordsListItem/WordListItem';
 
-const WordsList = ({ words, wordsMarkedAsNew, wordsMarkedAsDeleted, loadingWords, actions }) => {
+const WordsList = ({
+	words,
+	wordsMarkedAsNew,
+	wordsMarkedAsDeleted,
+	loadingWords,
+	actions,
+}) => {
 	return (
 		<section className="words-list">
 			{words.map((word) => (
