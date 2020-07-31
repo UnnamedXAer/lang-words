@@ -12,6 +12,12 @@
 	transform-origin: right top;
 }
 
+.dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
 .dialog-entering {
 	animation: dialog-open ease 200ms forwards;
 }

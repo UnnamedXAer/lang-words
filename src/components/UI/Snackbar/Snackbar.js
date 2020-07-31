@@ -2,9 +2,28 @@ import React, { useRef, useEffect } from 'react';
 import './Snackbar.css';
 import ReactDOM from 'react-dom';
 import { Transition } from 'react-transition-group';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Alert from '../Alert/Alert';
 
 const snackbarRoot = document.getElementById('snackbar-root');
+/**
+ *
+ * @return { {
+	open: boolean,
+	severity: "info" | "error" | "warning" | "success"
+	timeout?: number,
+	onClose: (args: any) => void | Promise<void>
+	onExited?: (args: any) => void | Promise<void>
+	content: React.ReactNode,
+  }}
+ */
+export const getInitialSnackbarData = () => ({
+	open: false,
+	severity: 'info',
+	timeout: 4000,
+	onClose: () => {},
+	onExited: void 0,
+	content: null,
+});
 
 /**
  * Floating alert showing at the bottom of window.
@@ -14,7 +33,7 @@ const snackbarRoot = document.getElementById('snackbar-root');
 	severity: "info" | "error" | "warning" | "success"
 	timeout?: number,
 	onClose: (args: any) => void | Promise<void>
-	onExited: (args: any) => void | Promise<void>
+	onExited?: (args: any) => void | Promise<void>
 	content: React.ReactNode,
   }}} props
  */
@@ -40,24 +59,6 @@ const Snackbar = (props) => {
 		};
 	}, [onClose, timeout, open]);
 
-	let icon;
-	switch (severity) {
-		case 'error':
-			icon = 'times-circle';
-			break;
-		case 'warning':
-			icon = 'exclamation-triangle';
-			break;
-		case 'info':
-			icon = 'exclamation-circle';
-			break;
-		case 'success':
-			icon = 'check-circle';
-			break;
-		default:
-			icon = 'exclamation-circle';
-	}
-
 	return ReactDOM.createPortal(
 		<Transition
 			timeout={200}
@@ -71,18 +72,12 @@ const Snackbar = (props) => {
 			{(status) => (
 				<div
 					ref={ref}
-					className={`snackbar snackbar-${status} snackbar-${severity}`}
+					className={`snackbar snackbar-${status} `}
 					onClick={onClose}
-					role="alert"
 				>
-					<div className="snackbar-icon">
-						<FontAwesomeIcon icon={icon} size="lg" edgeMode="" />
-					</div>
-					{typeof message === 'string' ? (
-						<p>{content}</p>
-					) : (
-						<div>{content}</div>
-					)}
+					<Alert severity={severity} onClick={onClose}>
+						{content}
+					</Alert>
 				</div>
 			)}
 		</Transition>,

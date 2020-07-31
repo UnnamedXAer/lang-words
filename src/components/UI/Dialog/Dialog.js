@@ -35,7 +35,7 @@ const Dialog = ({ data }) => {
 
 	return (
 		<>
-			<Backdrop onClose={onClose} open={open} timeout={200} />
+			<Backdrop onClose={loading ? void 0 : onClose} open={open} timeout={200} />
 			{ReactDOM.createPortal(
 				<Transition
 					timeout={200}
@@ -51,15 +51,9 @@ const Dialog = ({ data }) => {
 							<div
 								role="dialog"
 								ref={ref}
-								className={[
-									'dialog-backdrop',
-									// , ' dialog-backdrop-', status
-								].join('')}
+								className={['dialog-backdrop'].join('')}
 							>
-								<div
-									// ref={backdropRef}
-									className={['dialog', ' dialog-', status].join('')}
-								>
+								<div className={['dialog', ' dialog-', status].join('')}>
 									<div className="dialog-title">{title}</div>
 									<hr />
 									<div className="dialog-content">{content}</div>
@@ -75,7 +69,6 @@ const Dialog = ({ data }) => {
 														btnType={action.btnType}
 														onClick={action.action}
 														disabled={disabled || loading}
-														// loading={loading}
 													>
 														{action.label}
 													</Button>

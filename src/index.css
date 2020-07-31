@@ -170,9 +170,20 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-#dialog-root,
-#backdrop-root {
+.portal-host {
 	width: 0;
 	height: 0;
 	background: transparent;
+}
+
+#snackbar-root {
+	width: auto;
+	height: auto;
+	position: absolute;
+	bottom: 16px;
+	right: 16px;
+	max-width: calc(100vw - 32px);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
