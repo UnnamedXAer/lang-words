@@ -1,7 +1,4 @@
 .spinner {
-	width: 42px;
-	height: 42px;
-	padding: 5px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -13,7 +10,7 @@
 	content: '';
 	border: 3px solid teal;
 	transform: rotate(30deg);
-	animation: 2s ease-in-out infinite spin;
+	animation: 1.5s ease-in-out infinite spin;
 }
 
 @keyframes spin {
@@ -33,6 +30,16 @@
 
 .spinner[data-size='small']::before {
 	border-width: 2px;
+}
+
+.spinner[data-size='medium'] {
+	width: 42px;
+	height: 42px;
+	padding: 5px;
+}
+
+.spinner[data-size='medium']::before {
+	border-width: 3px;
 }
 
 .spinner[data-size='large'] {
