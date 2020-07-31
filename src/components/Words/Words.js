@@ -20,7 +20,7 @@ const Words = () => {
 	] = useContext(WordsContext);
 	const [error, setError] = useState(null);
 	const [loadingWords, setLoadingWords] = useState({});
-	const [actionError, setActionError] = useState('error');
+	const [actionError, setActionError] = useState(null);
 	const [editedWord, setEditedWord] = useState(null);
 	const [dialogData, setDialogData] = useState(getInitialDialogData());
 
@@ -60,9 +60,11 @@ const Words = () => {
 			error: null,
 			title: 'Delete word',
 			content: (
-				<p>
-					Are you sure you want to delete{' '}
-					<strong>{words.find((x) => x.id === id).word}</strong>
+				<p className="words-delete-word">
+					Are you sure you want to delete word{' '}
+					<strong className="words-delete-word-highlight">
+						{words.find((x) => x.id === id).word}
+					</strong>
 				</p>
 			),
 			actions: [
