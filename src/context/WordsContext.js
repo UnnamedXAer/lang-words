@@ -1,82 +1,87 @@
 import React, { useReducer } from 'react';
 
 export const WordsContext = React.createContext();
+const wordsSortFunc = (words) => words.sort((a, b) => a.createAt - b.createAt);
 
-// const initialState = { firstLang: null, secondLang: null, words: [] };
+export const wordsExample = [
+	{
+		id: '3452345234sdfdsgf1',
+		word: 'desktop',
+		translations: ['pulpit', 'komputer stacjonarny'],
+		createAt: new Date('2020-07-24T08:52:27.644Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf2',
+		word: 'close',
+		translations: ['zamknij', 'blisko', 'ściśle'],
+		createAt: new Date('2020-07-24T08:52:48.780Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf3',
+		word: 'browser',
+		translations: ['przeglądarka'],
+		createAt: new Date('2020-07-31T08:20:24.313Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf4d',
+		word: 'expression',
+		translations: [],
+		createAt: new Date('2020-07-24T08:52:48.780Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf2c',
+		word: 'close',
+		translations: ['zamknij', 'blisko', 'ściśle'],
+		createAt: new Date('2020-07-24T08:52:48.780Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf3b',
+		word: 'browser',
+		translations: ['przeglądarka'],
+		createAt: new Date('2020-07-24T08:52:48.780Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+	{
+		id: '3452345234sdfdsgf4a',
+		word: 'expression',
+		translations: [],
+		createAt: new Date('2020-07-24T08:52:48.780Z'),
+		acknowledges: [],
+		collapse: false,
+		known: false,
+	},
+];
+
 const initialState = {
 	firstLang: 'en',
 	secondLang: 'pl',
-	words: [
-		{
-			id: '3452345234sdfdsgf1',
-			word: 'desktop',
-			translations: ['pulpit', 'komputer stacjonarny'],
-			createAt: new Date('2020-07-24T08:52:27.644Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf2',
-			word: 'close',
-			translations: ['zamknij', 'blisko', 'ściśle'],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf3',
-			word: 'browser',
-			translations: ['przeglądarka'],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf4d',
-			word: 'expression',
-			translations: [],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf2c',
-			word: 'close',
-			translations: ['zamknij', 'blisko', 'ściśle'],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf3b',
-			word: 'browser',
-			translations: ['przeglądarka'],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-		{
-			id: '3452345234sdfdsgf4a',
-			word: 'expression',
-			translations: [],
-			createAt: new Date('2020-07-24T08:52:48.780Z'),
-			acknowledges: [],
-			collapse: false,
-			known: false,
-		},
-	].sort((a, b) => a.createAt > b.createAt),
+	fetchingWords: false,
+	words: [],
 	knownWords: [],
 	wordsMarkedAsNew: {},
 	wordsMarkedAsDeleted: {},
 };
 
 export const WordsContextActions = {
+	FETCH_WORDS_START: 'WORDS_FETCH_WORDS_START',
+	FETCH_WORDS_FINISH: 'WORDS_FETCH_WORDS_FINISH',
 	ADD_WORD: 'WORDS_ADD_WORD',
 	ACKNOWLEDGE_WORD: 'WORDS_ACKNOWLEDGE_WORD',
 	MARK_AS_KNOWN_START: 'WORDS_MARK_AS_KNOWN_START',
@@ -89,6 +94,17 @@ export const WordsContextActions = {
 
 const reducer = (state, action) => {
 	switch (action.type) {
+		case WordsContextActions['FETCH_WORDS_START']: {
+			return { ...state, fetchingWords: true };
+		}
+		case WordsContextActions['FETCH_WORDS_FINISH']: {
+			const sortedWords = wordsSortFunc(action.payload.words);
+			return {
+				...state,
+				fetchingWords: false,
+				words: sortedWords,
+			};
+		}
 		case WordsContextActions['ADD_WORD']: {
 			const { word } = action.payload;
 			const updatedWords = [{ ...word }].concat(state.words);
@@ -96,6 +112,7 @@ const reducer = (state, action) => {
 				...state.wordsMarkedAsNew,
 				[word.id]: true,
 			};
+
 			return {
 				...state,
 				words: updatedWords,
@@ -148,6 +165,7 @@ const reducer = (state, action) => {
 				word,
 				translations: [...translations],
 			};
+
 			return { ...state, words: updatedWords };
 		}
 		case WordsContextActions['DELETE_WORD_START']: {
@@ -177,6 +195,7 @@ const reducer = (state, action) => {
 		case WordsContextActions['SET_MARKED_AS_NEW']: {
 			const { id, isNew } = action.payload;
 			const updatedWordsMarkedAsNew = { ...state.wordsMarkedAsNew, [id]: isNew };
+
 			return {
 				...state,
 				wordsMarkedAsNew: updatedWordsMarkedAsNew,
