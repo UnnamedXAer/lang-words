@@ -326,6 +326,14 @@ const Words = () => {
 				/>
 			)}
 			<Dialog data={dialogData} />
+			<Snackbar
+				data={{
+					onClose: () => setActionError(null),
+					open: actionError !== null,
+					content: actionError,
+					severity: 'error',
+				}}
+			/>
 		</>
 	);
 };
