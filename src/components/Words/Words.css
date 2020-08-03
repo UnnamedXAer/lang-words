@@ -1,3 +1,10 @@
+.words-spinner-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-top: 10%;
+}
+
 .words-delete-word {
 	margin: 16px 8px;
 }

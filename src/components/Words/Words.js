@@ -315,7 +315,9 @@ const Words = () => {
 					{error}
 				</Alert>
 			) : fetchingWords ? (
-				<Spinner size="large" />
+				<Spinner size="large" containerClass="words-spinner-container">
+					Loading...
+				</Spinner>
 			) : (
 				<WordsList
 					words={words}
