@@ -1,7 +1,7 @@
 .footer {
 	height: var(--footer-height);
 	width: 100%;
+	max-width: var(--max-width);
 	background-color: var(--bg-footer);
 	overflow-y: hidden;
-
 }

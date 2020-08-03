@@ -8,6 +8,9 @@
 :root {
 	--font-family: OpenSans;
 
+	--min-width: 648px;
+	--max-width: 1396px;
+	--min-height: 500px;
 	--footer-height: 60px;
 	--header-height: 60px;
 	--drawer-width: 320px;
