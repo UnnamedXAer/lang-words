@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
+import { AppContext, ROUTES } from '../../context/AppContext';
+import { WordsContext } from '../../context/WordsContext';
 
 const Header = () => {
 	const [addWordOpen, setAddWordOpen] = useState(false);
-
+	const [{ activeRoute }] = useContext(AppContext);
+	const [{ words, fetchingWords, wordsFetched }] = useContext(WordsContext);
 	return (
 		<header className="header">
 			<div className="header-title">
-				<span className="header-title-text">new words</span>
-				<span className="header-title-caption">{12} new words today</span>
+				<span className="header-title-text">{activeRoute.label}</span>
+				<span className="header-title-caption">
+					{!fetchingWords &&
+						wordsFetched &&
+						activeRoute.hash === ROUTES['WORDS'].hash &&
+						words.length + ' words'}
+				</span>
 			</div>
 			<div className="header-actions">
 				<span>

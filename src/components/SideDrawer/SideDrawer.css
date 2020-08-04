@@ -13,16 +13,19 @@
 	margin-top: 8px;
 }
 
-.drawer-navigation-item {
+.drawer-navigation a {
 	display: block;
 	cursor: pointer;
 	padding: 16px 24px;
+	text-decoration: none;
+	color: var(--color-dark);
 }
 
-.drawer-navigation-item:hover {
+.drawer-navigation a:hover {
 	background-color: var(--drawer-hover);
+	color: var(--color-light);
 }
 
-.drawer-navigation-item:active {
-	background-color: var(--drawer-active);
+.drawer-navigation a[data-active='true'] {
+	color: var(--color-light);
 }

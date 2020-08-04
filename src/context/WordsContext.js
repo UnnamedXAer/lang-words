@@ -1,7 +1,9 @@
 import React, { useReducer } from 'react';
 
 export const WordsContext = React.createContext();
-const wordsSortFunc = (words) => words.sort((a, b) => a.createAt - b.createAt);
+
+export const wordsSortFunc = (a, b) =>
+	(a.lastAcknowledge || a.createAt) - (b.lastAcknowledge || b.createAt);
 
 export const wordsExample = [
 	{
@@ -16,13 +18,13 @@ export const wordsExample = [
 	},
 	{
 		id: '3452345234sdfdsgf2',
-		word: 'close',
-		translations: ['zamknij', 'blisko', 'ściśle'],
+		word: 'known',
+		translations: ['znany', 'wiadomy'],
 		createAt: new Date('2020-07-24T08:52:48.780Z'),
 		lastAcknowledge: null,
 		acknowledgesCnt: 0,
 		collapse: false,
-		known: false,
+		known: true,
 	},
 	{
 		id: '3452345234sdfdsgf3',
@@ -80,6 +82,9 @@ const initialState = {
 	firstLang: 'en',
 	secondLang: 'pl',
 	fetchingWords: false,
+	fetchingKnownWords: false,
+	wordsFetched: false,
+	knownWordsFetched: false,
 	words: [],
 	knownWords: [],
 	wordsMarkedAsNew: {},
@@ -89,10 +94,14 @@ const initialState = {
 export const WordsContextActions = {
 	FETCH_WORDS_START: 'WORDS_FETCH_WORDS_START',
 	FETCH_WORDS_FINISH: 'WORDS_FETCH_WORDS_FINISH',
+	FETCH_KNOWN_WORDS_START: 'WORDS_FETCH_KNOWN_WORDS_START',
+	FETCH_KNOWN_WORDS_FINISH: 'WORDS_FETCH_KNOWN_WORDS_FINISH',
 	ADD_WORD: 'WORDS_ADD_WORD',
 	ACKNOWLEDGE_WORD: 'WORDS_ACKNOWLEDGE_WORD',
 	MARK_AS_KNOWN_START: 'WORDS_MARK_AS_KNOWN_START',
 	MARK_AS_KNOWN: 'WORDS_MARK_AS_KNOWN',
+	UN_MARK_WORD_START: 'WORDS_UN_MARK_WORD_START',
+	UN_MARK_WORD: 'WORDS_UN_MARK_WORD',
 	UPDATE_WORD: 'WORDS_UPDATE_WORD',
 	DELETE_WORD_START: 'WORDS_DELETE_WORD_START',
 	DELETE_WORD: 'WORDS_DELETE_WORD',
@@ -102,14 +111,23 @@ export const WordsContextActions = {
 const reducer = (state, action) => {
 	switch (action.type) {
 		case WordsContextActions['FETCH_WORDS_START']: {
-			return { ...state, fetchingWords: true };
+			return { ...state, fetchingWords: true, wordsFetched: true };
 		}
 		case WordsContextActions['FETCH_WORDS_FINISH']: {
-			const sortedWords = wordsSortFunc(action.payload.words);
 			return {
 				...state,
 				fetchingWords: false,
-				words: sortedWords,
+				words: action.payload.words,
+			};
+		}
+		case WordsContextActions['FETCH_KNOWN_WORDS_START']: {
+			return { ...state, fetchingKnownWords: true, knownWordsFetched: true };
+		}
+		case WordsContextActions['FETCH_KNOWN_WORDS_FINISH']: {
+			return {
+				...state,
+				fetchingKnownWords: false,
+				knownWords: action.payload.words,
 			};
 		}
 		case WordsContextActions['ADD_WORD']: {
@@ -130,26 +148,29 @@ const reducer = (state, action) => {
 			const { id } = action.payload;
 			const updatedWords = [...state.words];
 			const idx = updatedWords.findIndex((x) => x.id === id);
-			updatedWords[idx] = {
-				...updatedWords[idx],
-				lastAcknowledge: new Date(),
-				acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
-				collapse: true,
-			};
-
+			if (idx > -1) {
+				updatedWords[idx] = {
+					...updatedWords[idx],
+					lastAcknowledge: new Date(),
+					acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
+					collapse: true,
+				};
+			}
 			return { ...state, words: updatedWords };
 		}
 		case WordsContextActions['MARK_AS_KNOWN_START']: {
 			const { id } = action.payload;
 			const updatedWords = [...state.words];
 			const idx = updatedWords.findIndex((x) => x.id === id);
-			updatedWords[idx] = {
-				...updatedWords[idx],
-				lastAcknowledge: new Date(),
-				acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
-				collapse: true,
-				known: true,
-			};
+			if (idx > -1) {
+				updatedWords[idx] = {
+					...updatedWords[idx],
+					lastAcknowledge: new Date(),
+					acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
+					collapse: true,
+					known: true,
+				};
+			}
 
 			return { ...state, words: updatedWords };
 		}
@@ -159,33 +180,75 @@ const reducer = (state, action) => {
 			const updatedKnownWords = [...state.knownWords];
 			const updatedWords = [...state.words];
 			if (idx > -1) {
-				const word = state.words[idx];
+				const word = { ...state.words[idx], collapse: false, known: true };
 				updatedKnownWords.push(word);
 				updatedWords.splice(idx, 1);
 			}
 
 			return { ...state, words: updatedWords, knownWords: updatedKnownWords };
 		}
+
+		case WordsContextActions['UN_MARK_WORD_START']: {
+			const { id } = action.payload;
+			const updatedKnownWords = [...state.knownWords];
+			const idx = updatedKnownWords.findIndex((x) => x.id === id);
+			if (idx > -1) {
+				updatedKnownWords[idx] = {
+					...updatedKnownWords[idx],
+					collapse: true,
+					known: false,
+				};
+			}
+
+			return { ...state, knownWords: updatedKnownWords };
+		}
+		case WordsContextActions['UN_MARK_WORD']: {
+			const { id } = action.payload;
+			const updatedKnownWords = [...state.knownWords];
+			const idx = updatedKnownWords.findIndex((x) => x.id === id);
+			const updatedWords = [...state.words];
+			if (idx > -1) {
+				const word = { ...updatedKnownWords[idx], collapse: false };
+				updatedKnownWords.splice(idx, 1);
+				updatedWords.push(word);
+			}
+
+			return { ...state, words: updatedWords, knownWords: updatedKnownWords };
+		}
+
 		case WordsContextActions['UPDATE_WORD']: {
 			const { word, translations, id } = action.payload;
 			const updatedWords = [...state.words];
 			const idx = updatedWords.findIndex((x) => x.id === id);
-			updatedWords[idx] = {
-				...updatedWords[idx],
-				word,
-				translations: [...translations],
-			};
+			if (idx > -1) {
+				updatedWords[idx] = {
+					...updatedWords[idx],
+					word,
+					translations: [...translations],
+				};
+			}
 
 			return { ...state, words: updatedWords };
 		}
 		case WordsContextActions['DELETE_WORD_START']: {
 			const { id } = action.payload;
 			const updatedWords = [...state.words];
+			const updatedKnownWords = [...state.knownWords];
 			const idx = updatedWords.findIndex((x) => x.id === id);
-			updatedWords[idx] = {
-				...updatedWords[idx],
-				collapse: true,
-			};
+			if (idx > -1) {
+				updatedWords[idx] = {
+					...updatedWords[idx],
+					collapse: true,
+				};
+			} else {
+				const knownWordsIdx = updatedKnownWords.findIndex((x) => x.id === id);
+				if (knownWordsIdx > -1) {
+					updatedWords[idx] = {
+						...updatedWords[idx],
+						collapse: true,
+					};
+				}
+			}
 			const updatedWordsMarkedAsDeleted = {
 				...state.wordsMarkedAsDeleted,
 				[id]: true,
@@ -194,13 +257,15 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				words: updatedWords,
+				knownWords: updatedKnownWords,
 				wordsMarkedAsDeleted: updatedWordsMarkedAsDeleted,
 			};
 		}
 		case WordsContextActions['DELETE_WORD']: {
 			const { id } = action.payload;
 			const updatedWords = state.words.filter((x) => x.id !== id);
-			return { ...state, words: updatedWords };
+			const updatedKnownWords = state.knownWords.filter((x) => x.id !== id);
+			return { ...state, words: updatedWords, knownWords: updatedKnownWords };
 		}
 		case WordsContextActions['SET_MARKED_AS_NEW']: {
 			const { id, isNew } = action.payload;

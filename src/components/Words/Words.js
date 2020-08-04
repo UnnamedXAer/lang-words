@@ -5,6 +5,7 @@ import {
 	WordsContext,
 	WordsContextActions,
 	wordsExample,
+	wordsSortFunc,
 } from '../../context/WordsContext';
 import Dialog, { getInitialDialogData } from '../UI/Dialog/Dialog';
 import EditWordForm from '../EditWordForm/EditWordForm';
@@ -12,12 +13,29 @@ import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar from '../UI/Snackbar/Snackbar';
 import Spinner from '../UI/Spinner/Spinner';
 import Alert from '../UI/Alert/Alert';
+import { AppContext, ROUTES } from '../../context/AppContext';
 
 const Words = () => {
 	const [
-		{ words, wordsMarkedAsNew, wordsMarkedAsDeleted, fetchingWords },
+		{
+			activeRoute: { hash },
+		},
+	] = useContext(AppContext);
+	const isInWords = hash === ROUTES['WORDS'].hash;
+	const [
+		{
+			words,
+			knownWords,
+			wordsMarkedAsNew,
+			wordsMarkedAsDeleted,
+			fetchingWords,
+			fetchingKnownWords,
+			wordsFetched,
+			knownWordsFetched,
+		},
 		dispatch,
 	] = useContext(WordsContext);
+	const loading = isInWords ? fetchingWords : fetchingKnownWords;
 	const [error, setError] = useState(null);
 	const [loadingWords, setLoadingWords] = useState({});
 	const [actionError, setActionError] = useState(null);
@@ -32,32 +50,40 @@ const Words = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		const loadWords = async () => {
+	const loadWords = useCallback(
+		async (_isInWords) => {
 			setError(null);
 			try {
 				dispatch({
-					type: WordsContextActions.FETCH_WORDS_START,
+					type:
+						WordsContextActions[
+							_isInWords ? 'FETCH_WORDS_START' : 'FETCH_KNOWN_WORDS_START'
+						],
 				});
 				await asyncFunc(1200);
 				const sortedWords = wordsExample
-					.sort(
-						(a, b) =>
-							(a.lastAcknowledge || a.createAt) -
-							(b.lastAcknowledge || b.createAt)
-					)
+					.filter((x) => (_isInWords && !x.known) || (!_isInWords && x.known))
+					.sort(wordsSortFunc)
 					.slice(0, 3);
 				dispatch({
-					type: WordsContextActions.FETCH_WORDS_FINISH,
+					type:
+						WordsContextActions[
+							_isInWords ? 'FETCH_WORDS_FINISH' : 'FETCH_KNOWN_WORDS_FINISH'
+						],
 					payload: { words: sortedWords },
 				});
 			} catch (err) {
 				setError(err.message);
 			}
-		};
+		},
+		[dispatch]
+	);
 
-		loadWords();
-	}, [dispatch]);
+	useEffect(() => {
+		if ((isInWords && !wordsFetched) || (!isInWords && !knownWordsFetched)) {
+			loadWords(isInWords);
+		}
+	}, [dispatch, isInWords, knownWordsFetched, loadWords, wordsFetched]);
 
 	const deleteHandler = (id) => {
 		setDialogData({
@@ -69,7 +95,7 @@ const Words = () => {
 				<p className="words-delete-word">
 					Are you sure you want to delete word{' '}
 					<strong className="words-delete-word-highlight">
-						{words.find((x) => x.id === id).word}
+						{(isInWords ? words : knownWords).find((x) => x.id === id).word}
 					</strong>
 				</p>
 			),
@@ -120,7 +146,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError(err.message);
+				setActionError('Sorry, could not delete word, please try again later');
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -307,12 +333,65 @@ const Words = () => {
 		}
 	}, [editedWord, saveEditedWordHandler]);
 
+	const unMarkAsWordHandler = (id) => {
+		unMarkAsWord(id);
+	};
+
+	const unMarkAsWord = async (id) => {
+		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
+		try {
+			await asyncFunc(1000);
+			dispatch({
+				type: WordsContextActions.UN_MARK_WORD_START,
+				payload: { id },
+			});
+			if (isMounted.current) {
+				setTimeout(() => {
+					if (isMounted.current) {
+						setLoadingWords((prevState) => ({
+							...prevState,
+							[id]: false,
+						}));
+					}
+					dispatch({
+						type: WordsContextActions.UN_MARK_WORD,
+						payload: { id },
+					});
+				}, 500);
+			} else {
+				dispatch({
+					type: WordsContextActions.UN_MARK_WORD,
+					payload: { id },
+				});
+			}
+		} catch (err) {
+			if (isMounted.current) {
+				setActionError(err.message);
+				setLoadingWords((prevState) => ({
+					...prevState,
+					[id]: false,
+				}));
+			}
+		}
+	};
+
 	const actions = [
 		{ title: 'Edit word', icon: 'edit', action: editHandler },
 		{ title: 'Delete word', icon: 'trash-alt', action: deleteHandler },
-		{ title: 'Mark as known', icon: 'check-double', action: markAsKnownHandler },
-		{ title: 'Acknowledge', icon: 'check', action: acknowledgeHandler },
 	];
+
+	if (isInWords) {
+		actions.push(
+			{ title: 'Mark as known', icon: 'check-double', action: markAsKnownHandler },
+			{ title: 'Acknowledge', icon: 'check', action: acknowledgeHandler }
+		);
+	} else {
+		actions.push({
+			title: 'Move to Words',
+			icon: ['check-double', 'times'],
+			action: unMarkAsWordHandler,
+		});
+	}
 
 	return (
 		<>
@@ -320,13 +399,13 @@ const Words = () => {
 				<Alert onClick={() => setError(null)} severity="error">
 					{error}
 				</Alert>
-			) : fetchingWords ? (
+			) : loading ? (
 				<Spinner size="large" containerClass="words-spinner-container">
 					Loading...
 				</Spinner>
 			) : (
 				<WordsList
-					words={words}
+					words={isInWords ? words : knownWords}
 					wordsMarkedAsNew={wordsMarkedAsNew}
 					wordsMarkedAsDeleted={wordsMarkedAsDeleted}
 					actions={actions}

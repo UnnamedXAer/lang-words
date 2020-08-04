@@ -12,9 +12,11 @@ import {
 	faExclamationCircle,
 	faTimesCircle,
 	faCheckCircle,
+	faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import AppContent from './components/App/AppContent';
+import AppContextProvider from './context/AppContext';
 import WordContextProvider from './context/WordsContext';
+import AppContent from './components/App/AppContent';
 
 library.add(
 	faPlus,
@@ -27,14 +29,17 @@ library.add(
 	faCheckCircle,
 	faExclamationTriangle,
 	faExclamationCircle,
+	faTimes
 );
 
 function App() {
 	return (
 		<div className="app">
-			<WordContextProvider>
-				<AppContent />
-			</WordContextProvider>
+			<AppContextProvider>
+				<WordContextProvider>
+					<AppContent />
+				</WordContextProvider>
+			</AppContextProvider>
 		</div>
 	);
 }

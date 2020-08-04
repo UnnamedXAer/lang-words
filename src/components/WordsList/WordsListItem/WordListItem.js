@@ -35,15 +35,23 @@ const WordListItem = ({ word, isNew, isDeleted, actions, loading }) => {
 				<div className="words-list-item-actions">
 					{actions.map((action) => (
 						<Button
-							key={action.icon}
+							key={action.title}
 							title={action.title}
 							onClick={() => action.action(word.id)}
 							disabled={loading}
 						>
 							{loading ? (
 								<Spinner size="small" />
-							) : (
+							) : typeof action.icon === 'string' ? (
 								<FontAwesomeIcon icon={action.icon} />
+							) : (
+								<span className="fa-layers fa-fw">
+									<FontAwesomeIcon icon={action.icon[0]} />
+									<FontAwesomeIcon
+										icon={action.icon[1]}
+										transform="shrink-5 down-7 right-9"
+									/>
+								</span>
 							)}
 						</Button>
 					))}
