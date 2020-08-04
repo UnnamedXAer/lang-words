@@ -11,6 +11,7 @@ const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 	const [{ words, fetchingWords, wordsFetched }] = useContext(WordsContext);
 
 	const logoutHandler = () => {
+		localStorage.removeItem('user');
 		dispatchApp({ type: AppContextActions.LOGOUT });
 	};
 

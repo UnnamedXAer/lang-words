@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Auth.css';
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button';
@@ -9,8 +9,20 @@ const Auth = ({ dispatchApp }) => {
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isLogin, setIsLogin] = useState(true);
-	const [values, setValues] = useState({ email: '', password: '' });
+	const [values, setValues] = useState({ email: 'test@test.com', password: 'qwe123' });
 	const [formErrors, setFormErrors] = useState({ email: null, password: null });
+
+	useEffect(() => {
+		const user = localStorage.getItem('user');
+		if (user) {
+			dispatchApp({
+				type: AppContextActions.AUTHENTICATE,
+				payload: {
+					user: JSON.parse(user),
+				},
+			});
+		}
+	}, []);
 
 	const formChangeHandler = (ev) => {
 		const {
@@ -59,8 +71,16 @@ const Auth = ({ dispatchApp }) => {
 		setError(null);
 		setLoading(true);
 		try {
-			const response = await authenticate();
+			const credentials = {
+				email,
+				password,
+			};
+			const response = await authenticate(credentials);
 			if (response) {
+				localStorage.setItem(
+					'user',
+					JSON.stringify({ email: credentials.email })
+				);
 				dispatchApp({
 					type: AppContextActions.AUTHENTICATE,
 					payload: { user: { email: values.email } },
@@ -72,12 +92,8 @@ const Auth = ({ dispatchApp }) => {
 		}
 	};
 
-	const authenticate = () =>
-		new Promise((resolve, reject) =>
-			setTimeout(() => {
-				resolve({ email: 'rkl2@o2.pl' });
-			}, 1400)
-		);
+	const authenticate = (credentials) =>
+		new Promise((resolve, reject) => resolve({ credentials }));
 
 	return (
 		<div className="auth-container">
@@ -91,6 +107,7 @@ const Auth = ({ dispatchApp }) => {
 							type="email"
 							onChange={formChangeHandler}
 							disabled={loading}
+							value={values.email}
 						/>
 						{formErrors.email && (
 							<p className="auth-helper-text auth-helper-text-error">
@@ -105,6 +122,7 @@ const Auth = ({ dispatchApp }) => {
 							type="password"
 							onChange={formChangeHandler}
 							disabled={loading}
+							value={values.password}
 						/>
 						{formErrors.password && (
 							<p className="auth-helper-text auth-helper-text-error">

@@ -8,12 +8,12 @@ import { ROUTES } from './context/AppContext';
 
 (() => {
 	const {
-		location: { origin, hash, pathname },
+		location: { origin, hash, pathname, search },
 	} = window;
 
 	if (hash !== ROUTES.WORDS.hash && hash !== ROUTES.KNOWN_WORDS.hash) {
 		window.location.href = origin + '/' + ROUTES.WORDS.hash;
-	} else if (pathname !== '/') {
+	} else if (pathname !== '/' || search !== '') {
 		window.location.href = origin + '/' + hash;
 	}
 })();
