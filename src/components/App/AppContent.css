@@ -25,7 +25,7 @@
 }
 
 /*calc(var(--min-height) + var(--var(header-height) + var(--footer-height))*/
-@media screen and (max-height: 620px) {
+@media screen and (max-height: 590px) {
 	.app {
 		overflow-y: auto;
 	}

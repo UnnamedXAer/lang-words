@@ -3,5 +3,20 @@
 	width: 100%;
 	max-width: var(--max-width);
 	background-color: var(--bg-footer);
-	overflow-y: hidden;
+	color: var(--color-dark);
+	padding-left: 16px;
+	padding-right: 16px;
+
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.footer-app-name {
+	font-size: 0.8em;
+	font-style: oblique;
+}
+
+.footer-app-name p::before {
+	content: '\00A9\0020\0020';
 }
