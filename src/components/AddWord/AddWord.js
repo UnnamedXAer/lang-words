@@ -29,7 +29,8 @@ const AddWord = ({ open, onClose }) => {
 					word,
 					translations: [...translations],
 					createAt: new Date(),
-					acknowledges: [],
+					lastAcknowledge: null,
+					acknowledgesCnt: 0,
 					known: false,
 				};
 				document
