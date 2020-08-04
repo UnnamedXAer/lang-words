@@ -25,10 +25,14 @@ const getInitialRoute = () => {
 
 const initialState = {
 	activeRoute: getInitialRoute(),
+	user: null,
+	authLoading: false,
 };
 
 export const AppContextActions = {
 	REDIRECT: 'APP_REDIRECT',
+	AUTHENTICATE: 'APP_AUTHENTICATE',
+	LOGOUT: 'APP_LOGOUT',
 };
 
 const reducer = (state, action) => {
@@ -38,7 +42,19 @@ const reducer = (state, action) => {
 				...state,
 				activeRoute: action.payload,
 			};
+		case AppContextActions['AUTHENTICATE']:
+			const { user } = action.payload;
 
+			return {
+				...state,
+				user,
+			};
+
+		case AppContextActions['LOGOUT']:
+			return {
+				...state,
+				user: null,
+			};
 		default:
 			return state;
 	}

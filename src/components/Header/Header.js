@@ -3,13 +3,17 @@ import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { AppContext, ROUTES } from '../../context/AppContext';
+import { ROUTES, AppContextActions } from '../../context/AppContext';
 import { WordsContext } from '../../context/WordsContext';
 
-const Header = () => {
+const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 	const [addWordOpen, setAddWordOpen] = useState(false);
-	const [{ activeRoute }] = useContext(AppContext);
 	const [{ words, fetchingWords, wordsFetched }] = useContext(WordsContext);
+
+	const logoutHandler = () => {
+		dispatchApp({ type: AppContextActions.LOGOUT });
+	};
+
 	return (
 		<header className="header">
 			<div className="header-title">
@@ -22,6 +26,18 @@ const Header = () => {
 				</span>
 			</div>
 			<div className="header-actions">
+				<span>
+					<p>{user.email}</p>
+				</span>
+				<span>
+					<Button
+						className="header-actions-button"
+						title="Logout"
+						onClick={logoutHandler}
+					>
+						Logout
+					</Button>
+				</span>
 				<span>
 					<Button className="header-actions-button" title="Settings">
 						<FontAwesomeIcon icon="cog" size="lg" />
