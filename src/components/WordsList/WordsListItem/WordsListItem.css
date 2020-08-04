@@ -1,3 +1,7 @@
+.words-list-item-card {
+	padding-bottom: 0 !important;
+}
+
 .words-list-item {
 	display: flex;
 	flex-direction: row;
@@ -47,6 +51,19 @@
 
 .words-list-item-actions .button {
 	min-height: 50px;
+}
+
+.words-list-item-footer {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin-top: 8px;
+	font-size: 0.7em;
+	color: var(--color-darker);
+}
+
+.words-list-item-footer p {
+	margin-right: 1em;
 }
 
 @media screen and (max-width: 950px) {

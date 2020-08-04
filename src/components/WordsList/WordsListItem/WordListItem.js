@@ -9,6 +9,7 @@ const WordListItem = ({ word, isNew, isDeleted, actions, loading }) => {
 	return (
 		<Card
 			className={[
+				'words-list-item-card',
 				word.collapse
 					? `words-list-item-hide words-list-item-hide-${
 							isDeleted ? 'danger' : 'success'
@@ -47,6 +48,20 @@ const WordListItem = ({ word, isNew, isDeleted, actions, loading }) => {
 						</Button>
 					))}
 				</div>
+			</div>
+			<div className="words-list-item-footer">
+				<p>
+					Added at: <span>{word.createAt.toLocaleString()}</span>
+				</p>
+				<p>
+					Acknowledges count: <span>{word.acknowledgesCnt}</span>
+				</p>
+				{word.lastAcknowledge && (
+					<p>
+						Last acknowledged at{' '}
+						<span>{word.lastAcknowledge.toLocaleString()}</span>
+					</p>
+				)}
 			</div>
 		</Card>
 	);

@@ -40,10 +40,16 @@ const Words = () => {
 					type: WordsContextActions.FETCH_WORDS_START,
 				});
 				await asyncFunc(1200);
-
+				const sortedWords = wordsExample
+					.sort(
+						(a, b) =>
+							(a.lastAcknowledge || a.createAt) -
+							(b.lastAcknowledge || b.createAt)
+					)
+					.slice(0, 3);
 				dispatch({
 					type: WordsContextActions.FETCH_WORDS_FINISH,
-					payload: { words: wordsExample },
+					payload: { words: sortedWords },
 				});
 			} catch (err) {
 				setError(err.message);
@@ -221,7 +227,7 @@ const Words = () => {
 		setActionError(null);
 		setLoadingWords((pS) => ({ ...pS, [id]: true }));
 		try {
-			await asyncFunc(111, 0, 1);
+			await asyncFunc(111, 0);
 			dispatch({
 				type: WordsContextActions.ACKNOWLEDGE_WORD,
 				payload: { id },
