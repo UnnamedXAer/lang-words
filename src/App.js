@@ -17,6 +17,7 @@ import {
 import AppContextProvider from './context/AppContext';
 import WordContextProvider from './context/WordsContext';
 import AppContent from './components/App/AppContent';
+import FirebaseContextProvider from './context/FirebaseContext';
 
 library.add(
 	faPlus,
@@ -35,11 +36,13 @@ library.add(
 function App() {
 	return (
 		<div className="app">
-			<AppContextProvider>
-				<WordContextProvider>
-					<AppContent />
-				</WordContextProvider>
-			</AppContextProvider>
+			<FirebaseContextProvider>
+				<AppContextProvider>
+					<WordContextProvider>
+						<AppContent />
+					</WordContextProvider>
+				</AppContextProvider>
+			</FirebaseContextProvider>
 		</div>
 	);
 }

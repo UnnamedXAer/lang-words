@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Auth.css';
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button';
 import { AppContextActions } from '../../context/AppContext';
 import Alert from '../UI/Alert/Alert';
+import { FirebaseContext } from '../../context/FirebaseContext';
 
 const Auth = ({ dispatchApp }) => {
+	const firebase = useContext(FirebaseContext);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +24,7 @@ const Auth = ({ dispatchApp }) => {
 				},
 			});
 		}
-	}, []);
+	}, [dispatchApp]);
 
 	const formChangeHandler = (ev) => {
 		const {
@@ -71,19 +73,21 @@ const Auth = ({ dispatchApp }) => {
 		setError(null);
 		setLoading(true);
 		try {
-			const credentials = {
-				email,
-				password,
+			const response = await firebase.authorize(isLogin, email, password);
+			const user = {
+				email: response.user.email,
+				emailVerified: response.user.emailVerified,
+				lastLoginTime: new Date(response.user.metadata.lastSignInTime),
+				creationTime: new Date(response.user.metadata.creationTime),
+				refreshToken: response.user.refreshToken,
+				id: response.user.uid,
 			};
-			const response = await authenticate(credentials);
+			console.log('response', response);
 			if (response) {
-				localStorage.setItem(
-					'user',
-					JSON.stringify({ email: credentials.email })
-				);
+				localStorage.setItem('user', JSON.stringify(user));
 				dispatchApp({
 					type: AppContextActions.AUTHENTICATE,
-					payload: { user: { email: values.email } },
+					payload: { user },
 				});
 			} else throw new Error('Authentication failed, please try again.');
 		} catch (err) {
@@ -92,8 +96,8 @@ const Auth = ({ dispatchApp }) => {
 		}
 	};
 
-	const authenticate = (credentials) =>
-		new Promise((resolve, reject) => resolve({ credentials }));
+	// const authenticate = (email, password) =>
+	// new Promise((resolve, reject) => resolve({ credentials }));
 
 	return (
 		<div className="auth-container">
@@ -130,7 +134,18 @@ const Auth = ({ dispatchApp }) => {
 							</p>
 						)}
 					</label>
-					<Button loading={loading}>Authenticate</Button>
+					<div>
+						<p
+							className="auth-switch-form"
+							onClick={(ev) => {
+								setIsLogin((prevState) => !prevState);
+							}}
+						>
+							Switch to{' '}
+							<strong>{isLogin ? 'Registration' : 'Login'}</strong>.
+						</p>
+					</div>
+					<Button loading={loading}>{isLogin ? 'Login' : 'Register'}</Button>
 				</form>
 				{error && <Alert severity="error">{error}</Alert>}
 			</div>
