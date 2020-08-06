@@ -4,7 +4,6 @@ import WordsList from '../WordsList/WordsList';
 import {
 	WordsContext,
 	WordsContextActions,
-	wordsExample,
 	wordsSortFunc,
 } from '../../context/WordsContext';
 import Dialog, { getInitialDialogData } from '../UI/Dialog/Dialog';
@@ -14,6 +13,7 @@ import Snackbar from '../UI/Snackbar/Snackbar';
 import Spinner from '../UI/Spinner/Spinner';
 import Alert from '../UI/Alert/Alert';
 import { AppContext, ROUTES } from '../../context/AppContext';
+import { FirebaseContext } from '../../context/FirebaseContext';
 
 const Words = () => {
 	const [
@@ -35,6 +35,7 @@ const Words = () => {
 		},
 		dispatch,
 	] = useContext(WordsContext);
+	const firebase = useContext(FirebaseContext);
 	const loading = isInWords ? fetchingWords : fetchingKnownWords;
 	const [error, setError] = useState(null);
 	const [loadingWords, setLoadingWords] = useState({});
@@ -55,28 +56,48 @@ const Words = () => {
 			setError(null);
 			try {
 				dispatch({
-					type:
-						WordsContextActions[
-							_isInWords ? 'FETCH_WORDS_START' : 'FETCH_KNOWN_WORDS_START'
-						],
+					type: WordsContextActions['FETCH_WORDS_START'],
 				});
-				await asyncFunc(1200);
-				const sortedWords = wordsExample
-					.filter((x) => (_isInWords && !x.known) || (!_isInWords && x.known))
-					.sort(wordsSortFunc)
-					.slice(0, 3);
 				dispatch({
-					type:
-						WordsContextActions[
-							_isInWords ? 'FETCH_WORDS_FINISH' : 'FETCH_KNOWN_WORDS_FINISH'
-						],
-					payload: { words: sortedWords },
+					type: WordsContextActions['FETCH_KNOWN_WORDS_START'],
+				});
+				const snapshot = await firebase.words().once('value');
+				const values = snapshot.val();
+				const receivedWords = [];
+				const receivedKnownWords = [];
+				if (values !== null) {
+					const keys = Object.keys(values);
+					keys.forEach((key) => {
+						const word = { ...values[key] };
+						word.id = key;
+						word.lastAcknowledgeAt = word.lastAcknowledgeAt
+							? new Date(word.lastAcknowledgeAt)
+							: null;
+						word.createAt = new Date(values[key].createAt);
+
+						if (word.known) {
+							receivedKnownWords.push(word);
+						} else {
+							receivedWords.push(word);
+						}
+					});
+				}
+				receivedWords.sort(wordsSortFunc);
+				receivedKnownWords.sort(wordsSortFunc);
+
+				dispatch({
+					type: WordsContextActions['FETCH_WORDS_FINISH'],
+					payload: { words: receivedWords },
+				});
+				dispatch({
+					type: WordsContextActions['FETCH_KNOWN_WORDS_FINISH'],
+					payload: { words: receivedKnownWords },
 				});
 			} catch (err) {
-				setError(err.message);
+				setError(err.message.split(': ')[1] || err.message);
 			}
 		},
-		[dispatch]
+		[dispatch, firebase]
 	);
 
 	useEffect(() => {
@@ -120,7 +141,7 @@ const Words = () => {
 		closeDialog();
 		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
 		try {
-			await asyncFunc(1200, 0, 0);
+			await firebase.words().child(`/${id}`).remove();
 			dispatch({
 				type: WordsContextActions.DELETE_WORD_START,
 				payload: { id },
@@ -146,7 +167,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError('Sorry, could not delete word, please try again later');
+				setActionError(err.message.split(': ')[1] || err.message);
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -197,7 +218,14 @@ const Words = () => {
 	const markAsKnown = async (id) => {
 		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
 		try {
-			await asyncFunc(1000);
+			await firebase
+				.words()
+				.child(`/${id}`)
+				.update({
+					lastAcknowledgeAt: firebase.ServerValueNS.TIMESTAMP,
+					acknowledgesCnt: firebase.ServerValueNS.increment(1),
+					known: true,
+				});
 			dispatch({
 				type: WordsContextActions.MARK_AS_KNOWN_START,
 				payload: { id },
@@ -223,7 +251,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError(err.message);
+				setActionError(err.message.split(': ')[1] || err.message);
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -232,34 +260,23 @@ const Words = () => {
 		}
 	};
 
-	const asyncFunc = (timeout = 1000, func, shouldReject = false) => {
-		return new Promise((resolve, reject) => {
-			const t = setTimeout(() => {
-				typeof func === 'function'
-					? func()
-					: ((t) => {
-							console.log('timeout executed', t);
-					  })(t);
-				if (shouldReject) {
-					reject(new Error('Async rejected :('));
-				} else {
-					resolve();
-				}
-			}, timeout);
-		});
-	};
-
 	const acknowledgeHandler = async (id) => {
 		setActionError(null);
 		setLoadingWords((pS) => ({ ...pS, [id]: true }));
 		try {
-			await asyncFunc(111, 0);
+			await firebase
+				.words()
+				.child(`/${id}`)
+				.update({
+					lastAcknowledgeAt: firebase.ServerValueNS.TIMESTAMP,
+					acknowledgesCnt: firebase.ServerValueNS.increment(1),
+				});
 			dispatch({
 				type: WordsContextActions.ACKNOWLEDGE_WORD,
 				payload: { id },
 			});
 		} catch (err) {
-			setActionError(err.message);
+			setActionError(err.message.split(': ')[1] || err.message);
 		}
 		if (isMounted.current) {
 			setLoadingWords((pS) => ({ ...pS, [id]: false }));
@@ -275,21 +292,34 @@ const Words = () => {
 	};
 
 	const editWord = useCallback(
-		(id, word, translations) =>
-			new Promise((resolve, reject) => {
-				setTimeout(() => {
-					dispatch({
-						type: WordsContextActions.UPDATE_WORD,
-						payload: {
-							id,
-							word,
-							translations,
-						},
-					});
-					resolve();
-				}, 2000);
-			}),
-		[dispatch]
+		async (id, word, translations) => {
+			setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
+			try {
+				await firebase.words().child(`/${id}`).update({
+					word,
+					translations,
+				});
+				dispatch({
+					type: WordsContextActions.UPDATE_WORD,
+					payload: {
+						id,
+						word,
+						translations,
+					},
+				});
+			} catch (err) {
+				if (isMounted.current) {
+					setActionError(err.message.split(': ')[1] || err.message);
+				}
+			}
+			if (isMounted.current) {
+				setLoadingWords((prevState) => ({
+					...prevState,
+					[id]: false,
+				}));
+			}
+		},
+		[dispatch, firebase]
 	);
 
 	const saveEditedWordHandler = useCallback(async () => {
@@ -340,7 +370,9 @@ const Words = () => {
 	const unMarkAsWord = async (id) => {
 		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
 		try {
-			await asyncFunc(1000);
+			await firebase.words().child(`/${id}`).update({
+				known: false,
+			});
 			dispatch({
 				type: WordsContextActions.UN_MARK_WORD_START,
 				payload: { id },

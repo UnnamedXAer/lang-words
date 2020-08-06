@@ -64,10 +64,10 @@ const WordListItem = ({ word, isNew, isDeleted, actions, loading }) => {
 				<p>
 					Acknowledges count: <span>{word.acknowledgesCnt}</span>
 				</p>
-				{word.lastAcknowledge && (
+				{word.lastAcknowledgeAt && (
 					<p>
 						Last acknowledged at{' '}
-						<span>{word.lastAcknowledge.toLocaleString()}</span>
+						<span>{word.lastAcknowledgeAt.toLocaleString()}</span>
 					</p>
 				)}
 			</div>

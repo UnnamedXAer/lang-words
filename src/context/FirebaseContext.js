@@ -1,14 +1,13 @@
 import React from 'react';
 import Firebase from '../firebase/Firebase';
 
+const firebaseObj = new Firebase();
+
 export const FirebaseContext = React.createContext();
-let cnt = 0;
+
 const FirebaseContextProvider = (props) => {
-	if (++cnt > 1) {
-		throw new Error('Created more than one firebase object');
-	}
 	return (
-		<FirebaseContext.Provider value={new Firebase()}>
+		<FirebaseContext.Provider value={firebaseObj}>
 			{props.children}
 		</FirebaseContext.Provider>
 	);

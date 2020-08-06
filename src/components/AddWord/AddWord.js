@@ -25,15 +25,18 @@ const AddWord = ({ open, onClose }) => {
 
 	const addWord = async (word, translations) => {
 		const newWord = {
-			id: Math.round(Math.random() * 1000000000000000).toString(),
 			word,
 			translations: [...translations],
 			createAt: new Date(),
-			lastAcknowledge: null,
+			lastAcknowledgeAt: null,
 			acknowledgesCnt: 0,
 			known: false,
 		};
-		firebase.addWord(newWord);
+		const res = await firebase.words().push({
+			...newWord,
+			createAt: firebase.ServerValueNS.TIMESTAMP,
+		});
+		newWord.id = res.key;
 		document
 			.querySelector('.work-section')
 			.scroll({ top: 0, left: 0, behavior: 'smooth' });
@@ -86,7 +89,7 @@ const AddWord = ({ open, onClose }) => {
 			closePanel();
 		} catch (err) {
 			setLoading(false);
-			return showSnackbarMessage(err.message);
+			return showSnackbarMessage(err.message.split(':')[1] || err.message);
 		}
 	};
 

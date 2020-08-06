@@ -66,10 +66,9 @@ const AppContextProvider = (props) => {
 	const firebase = useContext(FirebaseContext);
 
 	useEffect(() => {
-		console.log('add listener');
 		const listener = firebase.auth.onAuthStateChanged((authUser) => {
-			console.log('authUser', authUser);
 			let user = null;
+			firebase.setLoggedUserId();
 			if (authUser) {
 				user = {
 					email: authUser.email,
@@ -91,7 +90,7 @@ const AppContextProvider = (props) => {
 		return () => {
 			listener();
 		};
-	}, [firebase.auth]);
+	}, [firebase]);
 
 	useEffect(() => {
 		document.title = 'LANG WORD - ' + state.activeRoute.label;

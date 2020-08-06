@@ -52,7 +52,7 @@ const Snackbar = (props) => {
 	useEffect(() => {
 		let t;
 		if (open && onClose) {
-			// t = setTimeout(onClose, timeout);
+			t = setTimeout(onClose, timeout);
 		}
 		return () => {
 			if (t) clearTimeout(t);

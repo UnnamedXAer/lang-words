@@ -15,7 +15,6 @@ const DropDown = ({ open, children, onClose, className }) => {
 
 	const keyPressHandler = useCallback(
 		(ev) => {
-			console.log(ev.keyCode);
 			if (ev.keyCode === 27) {
 				onClose();
 			}

@@ -13,6 +13,7 @@ import {
 	faTimesCircle,
 	faCheckCircle,
 	faTimes,
+	faRedoAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import AppContextProvider from './context/AppContext';
 import WordContextProvider from './context/WordsContext';
@@ -30,7 +31,8 @@ library.add(
 	faCheckCircle,
 	faExclamationTriangle,
 	faExclamationCircle,
-	faTimes
+	faTimes,
+	faRedoAlt
 );
 
 function App() {

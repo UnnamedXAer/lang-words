@@ -3,80 +3,7 @@ import React, { useReducer } from 'react';
 export const WordsContext = React.createContext();
 
 export const wordsSortFunc = (a, b) =>
-	(a.lastAcknowledge || a.createAt) - (b.lastAcknowledge || b.createAt);
-
-export const wordsExample = [
-	{
-		id: '3452345234sdfdsgf1',
-		word: 'desktop',
-		translations: ['pulpit', 'komputer stacjonarny'],
-		createAt: new Date('2020-07-24T08:52:27.644Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: false,
-	},
-	{
-		id: '3452345234sdfdsgf2',
-		word: 'known',
-		translations: ['znany', 'wiadomy'],
-		createAt: new Date('2020-07-24T08:52:48.780Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: true,
-	},
-	{
-		id: '3452345234sdfdsgf3',
-		word: 'browser',
-		translations: ['przeglądarka'],
-		createAt: new Date('2020-07-31T08:20:24.313Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: false,
-	},
-	{
-		id: '3452345234sdfdsgf4d',
-		word: 'expression',
-		translations: [],
-		createAt: new Date('2020-07-24T08:52:48.780Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: false,
-	},
-	{
-		id: '3452345234sdfdsgf2c',
-		word: 'close',
-		translations: ['zamknij', 'blisko', 'ściśle'],
-		createAt: new Date('2020-07-24T08:51:42.780Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: false,
-	},
-	{
-		id: '3452345234sdfdsgf3b',
-		word: 'browser',
-		translations: ['przeglądarka'],
-		createAt: new Date('2020-07-24T08:52:48.780Z'),
-		lastAcknowledge: new Date('2020-07-24T11:52:48.780Z'),
-		acknowledgesCnt: 1,
-		collapse: false,
-		known: false,
-	},
-	{
-		id: '3452345234sdfdsgf4a',
-		word: 'expression',
-		translations: [],
-		createAt: new Date('2020-07-24T01:12:15.780Z'),
-		lastAcknowledge: null,
-		acknowledgesCnt: 0,
-		collapse: false,
-		known: false,
-	},
-];
+	(a.lastAcknowledgeAt || a.createAt) - (b.lastAcknowledgeAt || b.createAt);
 
 const initialState = {
 	firstLang: 'en',
@@ -106,6 +33,7 @@ export const WordsContextActions = {
 	DELETE_WORD_START: 'WORDS_DELETE_WORD_START',
 	DELETE_WORD: 'WORDS_DELETE_WORD',
 	SET_MARKED_AS_NEW: 'WORDS_SET_MARKED_AS_NEW',
+	TRIGGER_REFRESH: 'WORDS_TRIGGER_REFRESH',
 };
 
 const reducer = (state, action) => {
@@ -151,7 +79,7 @@ const reducer = (state, action) => {
 			if (idx > -1) {
 				updatedWords[idx] = {
 					...updatedWords[idx],
-					lastAcknowledge: new Date(),
+					lastAcknowledgeAt: new Date(),
 					acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
 					collapse: true,
 				};
@@ -165,7 +93,7 @@ const reducer = (state, action) => {
 			if (idx > -1) {
 				updatedWords[idx] = {
 					...updatedWords[idx],
-					lastAcknowledge: new Date(),
+					lastAcknowledgeAt: new Date(),
 					acknowledgesCnt: updatedWords[idx].acknowledgesCnt + 1,
 					collapse: true,
 					known: true,
@@ -274,6 +202,13 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				wordsMarkedAsNew: updatedWordsMarkedAsNew,
+			};
+		}
+		case WordsContextActions['TRIGGER_REFRESH']: {
+			return {
+				...state,
+				wordsFetched: false,
+				knownWordsFetched: false,
 			};
 		}
 		default:
