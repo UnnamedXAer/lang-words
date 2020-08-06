@@ -73,31 +73,12 @@ const Auth = ({ dispatchApp }) => {
 		setError(null);
 		setLoading(true);
 		try {
-			const response = await firebase.authorize(isLogin, email, password);
-			const user = {
-				email: response.user.email,
-				emailVerified: response.user.emailVerified,
-				lastLoginTime: new Date(response.user.metadata.lastSignInTime),
-				creationTime: new Date(response.user.metadata.creationTime),
-				refreshToken: response.user.refreshToken,
-				id: response.user.uid,
-			};
-			console.log('response', response);
-			if (response) {
-				localStorage.setItem('user', JSON.stringify(user));
-				dispatchApp({
-					type: AppContextActions.AUTHENTICATE,
-					payload: { user },
-				});
-			} else throw new Error('Authentication failed, please try again.');
+			await firebase.authorize(isLogin, email, password);
 		} catch (err) {
 			setError(err.message);
 			setLoading(false);
 		}
 	};
-
-	// const authenticate = (email, password) =>
-	// new Promise((resolve, reject) => resolve({ credentials }));
 
 	return (
 		<div className="auth-container">

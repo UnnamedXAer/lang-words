@@ -3,16 +3,21 @@ import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { ROUTES, AppContextActions } from '../../context/AppContext';
+import { ROUTES } from '../../context/AppContext';
 import { WordsContext } from '../../context/WordsContext';
+import { FirebaseContext } from '../../context/FirebaseContext';
 
-const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
+const Header = ({ appState: { activeRoute, user } }) => {
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [{ words, fetchingWords, wordsFetched }] = useContext(WordsContext);
+	const firebase = useContext(FirebaseContext);
 
-	const logoutHandler = () => {
-		localStorage.removeItem('user');
-		dispatchApp({ type: AppContextActions.LOGOUT });
+	const logoutHandler = async () => {
+		try {
+			await firebase.logOut();
+		} catch (err) {
+			console.log('logOut err: ', err);
+		}
 	};
 
 	return (

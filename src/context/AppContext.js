@@ -1,4 +1,5 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useContext } from 'react';
+import { FirebaseContext } from './FirebaseContext';
 
 export const AppContext = React.createContext();
 
@@ -62,6 +63,35 @@ const reducer = (state, action) => {
 
 const AppContextProvider = (props) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
+	const firebase = useContext(FirebaseContext);
+
+	useEffect(() => {
+		console.log('add listener');
+		const listener = firebase.auth.onAuthStateChanged((authUser) => {
+			console.log('authUser', authUser);
+			let user = null;
+			if (authUser) {
+				user = {
+					email: authUser.email,
+					emailVerified: authUser.emailVerified,
+					lastLoginTime: new Date(authUser.metadata.lastSignInTime),
+					creationTime: new Date(authUser.metadata.creationTime),
+					refreshToken: authUser.refreshToken,
+					id: authUser.uid,
+				};
+			}
+
+			dispatch({
+				type: AppContextActions.AUTHENTICATE,
+				payload: {
+					user,
+				},
+			});
+		});
+		return () => {
+			listener();
+		};
+	}, [firebase.auth]);
 
 	useEffect(() => {
 		document.title = 'LANG WORD - ' + state.activeRoute.label;

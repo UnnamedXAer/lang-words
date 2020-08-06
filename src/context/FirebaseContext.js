@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Firebase from '../firebase/Firebase';
 
 export const FirebaseContext = React.createContext();
-
+let cnt = 0;
 const FirebaseContextProvider = (props) => {
-	const [state, setState] = useState(null);
-
-	useEffect(() => {
-		setState(new Firebase());
-	}, []);
-
+	if (++cnt > 1) {
+		throw new Error('Created more than one firebase object');
+	}
 	return (
-		<FirebaseContext.Provider value={state}>
+		<FirebaseContext.Provider value={new Firebase()}>
 			{props.children}
 		</FirebaseContext.Provider>
 	);

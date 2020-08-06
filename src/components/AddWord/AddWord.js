@@ -6,9 +6,11 @@ import Button from '../UI/Button';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
+import { FirebaseContext } from '../../context/FirebaseContext';
 
 const AddWord = ({ open, onClose }) => {
 	const [loading, setLoading] = useState(false);
+	const firebase = useContext(FirebaseContext);
 	const [state, dispatch] = useContext(WordsContext);
 	const [word, setWord] = useState({ word: '', translations: [''] });
 	const [snackbarData, setSnackbarData] = useState(getInitialSnackbarData());
@@ -21,39 +23,36 @@ const AddWord = ({ open, onClose }) => {
 		setWord({ word: '', translations: [''] });
 	};
 
-	const addWord = (word, translations) =>
-		new Promise((resolve, reject) => {
-			setTimeout(() => {
-				const newWord = {
-					id: Math.round(Math.random() * 1000000000000000).toString(),
-					word,
-					translations: [...translations],
-					createAt: new Date(),
-					lastAcknowledge: null,
-					acknowledgesCnt: 0,
-					known: false,
-				};
-				document
-					.querySelector('.work-section')
-					.scroll({ top: 0, left: 0, behavior: 'smooth' });
-				dispatch({
-					type: WordsContextActions.ADD_WORD,
-					payload: {
-						word: newWord,
-					},
-				});
-				setTimeout(() => {
-					dispatch({
-						type: WordsContextActions.SET_MARKED_AS_NEW,
-						payload: {
-							id: newWord.id,
-							isNew: false,
-						},
-					});
-				}, 600);
-				resolve();
-			}, 1000);
+	const addWord = async (word, translations) => {
+		const newWord = {
+			id: Math.round(Math.random() * 1000000000000000).toString(),
+			word,
+			translations: [...translations],
+			createAt: new Date(),
+			lastAcknowledge: null,
+			acknowledgesCnt: 0,
+			known: false,
+		};
+		firebase.addWord(newWord);
+		document
+			.querySelector('.work-section')
+			.scroll({ top: 0, left: 0, behavior: 'smooth' });
+		dispatch({
+			type: WordsContextActions.ADD_WORD,
+			payload: {
+				word: newWord,
+			},
 		});
+		setTimeout(() => {
+			dispatch({
+				type: WordsContextActions.SET_MARKED_AS_NEW,
+				payload: {
+					id: newWord.id,
+					isNew: false,
+				},
+			});
+		}, 600);
+	};
 
 	const showSnackbarMessage = (msg, severity = 'error') =>
 		setSnackbarData({
