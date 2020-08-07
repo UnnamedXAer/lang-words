@@ -9,11 +9,47 @@ import {
 import Dialog, { getInitialDialogData } from '../UI/Dialog/Dialog';
 import EditWordForm from '../EditWordForm/EditWordForm';
 import { sanitizeWord } from '../../utils/wordValidator';
-import Snackbar from '../UI/Snackbar/Snackbar';
+import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
 import Spinner from '../UI/Spinner/Spinner';
 import Alert from '../UI/Alert/Alert';
 import { AppContext, ROUTES } from '../../context/AppContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
+
+const praseAPIWords = (values) => {
+	const receivedWords = [];
+	const receivedKnownWords = [];
+	if (values !== null) {
+		const keys = Object.keys(values);
+		keys.forEach((key) => {
+			const word = { ...values[key] };
+			word.id = key;
+			word.lastAcknowledgeAt = word.lastAcknowledgeAt
+				? new Date(word.lastAcknowledgeAt)
+				: null;
+			word.createAt = new Date(values[key].createAt);
+
+			if (word.known) {
+				receivedKnownWords.push(word);
+			} else {
+				receivedWords.push(word);
+			}
+		});
+		receivedWords.sort(wordsSortFunc);
+		receivedKnownWords.sort(wordsSortFunc);
+	}
+
+	return {
+		receivedWords,
+		receivedKnownWords,
+	};
+};
+
+let wordsActionsTimers = [];
+
+const clearTimers = () => {
+	wordsActionsTimers.forEach((t) => clearTimeout(t));
+	wordsActionsTimers = [];
+};
 
 const Words = () => {
 	const [
@@ -39,9 +75,9 @@ const Words = () => {
 	const loading = isInWords ? fetchingWords : fetchingKnownWords;
 	const [error, setError] = useState(null);
 	const [loadingWords, setLoadingWords] = useState({});
-	const [actionError, setActionError] = useState(null);
 	const [editedWord, setEditedWord] = useState(null);
 	const [dialogData, setDialogData] = useState(getInitialDialogData());
+	const [snackbarData, setSnackbarData] = useState(getInitialSnackbarData());
 
 	const isMounted = useRef(false);
 	useEffect(() => {
@@ -63,27 +99,9 @@ const Words = () => {
 				});
 				const snapshot = await firebase.words().once('value');
 				const values = snapshot.val();
-				const receivedWords = [];
-				const receivedKnownWords = [];
-				if (values !== null) {
-					const keys = Object.keys(values);
-					keys.forEach((key) => {
-						const word = { ...values[key] };
-						word.id = key;
-						word.lastAcknowledgeAt = word.lastAcknowledgeAt
-							? new Date(word.lastAcknowledgeAt)
-							: null;
-						word.createAt = new Date(values[key].createAt);
+				const { receivedWords, receivedKnownWords } = praseAPIWords(values);
 
-						if (word.known) {
-							receivedKnownWords.push(word);
-						} else {
-							receivedWords.push(word);
-						}
-					});
-				}
-				receivedWords.sort(wordsSortFunc);
-				receivedKnownWords.sort(wordsSortFunc);
+				clearTimers();
 
 				dispatch({
 					type: WordsContextActions['FETCH_WORDS_FINISH'],
@@ -105,6 +123,16 @@ const Words = () => {
 			loadWords(isInWords);
 		}
 	}, [dispatch, isInWords, knownWordsFetched, loadWords, wordsFetched]);
+
+	const showSnackbarMessage = (msg, severity = 'error') =>
+		setSnackbarData({
+			open: true,
+			severity: severity,
+			onClose: () =>
+				setSnackbarData((prevState) => ({ ...prevState, open: false })),
+			onExited: () => setSnackbarData(getInitialSnackbarData()),
+			content: msg,
+		});
 
 	const deleteHandler = (id) => {
 		setDialogData({
@@ -137,28 +165,31 @@ const Words = () => {
 	};
 
 	const deleteWord = async (id) => {
-		setActionError(null);
 		closeDialog();
 		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
 		try {
 			await firebase.words().child(`/${id}`).remove();
-			dispatch({
-				type: WordsContextActions.DELETE_WORD_START,
-				payload: { id },
-			});
 			if (isMounted.current) {
-				setTimeout(() => {
-					if (isMounted.current) {
-						setLoadingWords((prevState) => ({
-							...prevState,
-							[id]: false,
-						}));
-					}
-					dispatch({
-						type: WordsContextActions.DELETE_WORD,
-						payload: { id },
-					});
-				}, 500);
+				dispatch({
+					type: WordsContextActions.DELETE_WORD_START,
+					payload: { id },
+				});
+				showSnackbarMessage('Word removed.', 'success');
+
+				wordsActionsTimers.push(
+					setTimeout(() => {
+						if (isMounted.current) {
+							setLoadingWords((prevState) => ({
+								...prevState,
+								[id]: false,
+							}));
+						}
+						dispatch({
+							type: WordsContextActions.DELETE_WORD,
+							payload: { id },
+						});
+					}, 500)
+				);
 			} else {
 				dispatch({
 					type: WordsContextActions.DELETE_WORD,
@@ -167,7 +198,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError(err.message.split(': ')[1] || err.message);
+				showSnackbarMessage(err.message.split(': ')[1] || err.message, 'error');
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -231,18 +262,20 @@ const Words = () => {
 				payload: { id },
 			});
 			if (isMounted.current) {
-				setTimeout(() => {
-					if (isMounted.current) {
-						setLoadingWords((prevState) => ({
-							...prevState,
-							[id]: false,
-						}));
-					}
-					dispatch({
-						type: WordsContextActions.MARK_AS_KNOWN,
-						payload: { id },
-					});
-				}, 500);
+				wordsActionsTimers.push(
+					setTimeout(() => {
+						if (isMounted.current) {
+							setLoadingWords((prevState) => ({
+								...prevState,
+								[id]: false,
+							}));
+						}
+						dispatch({
+							type: WordsContextActions.MARK_AS_KNOWN,
+							payload: { id },
+						});
+					}, 500)
+				);
 			} else {
 				dispatch({
 					type: WordsContextActions.MARK_AS_KNOWN,
@@ -251,7 +284,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError(err.message.split(': ')[1] || err.message);
+				showSnackbarMessage(err.message.split(': ')[1] || err.message, 'error');
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -261,7 +294,6 @@ const Words = () => {
 	};
 
 	const acknowledgeHandler = async (id) => {
-		setActionError(null);
 		setLoadingWords((pS) => ({ ...pS, [id]: true }));
 		try {
 			await firebase
@@ -271,12 +303,23 @@ const Words = () => {
 					lastAcknowledgeAt: firebase.ServerValueNS.TIMESTAMP,
 					acknowledgesCnt: firebase.ServerValueNS.increment(1),
 				});
+
 			dispatch({
-				type: WordsContextActions.ACKNOWLEDGE_WORD,
+				type: WordsContextActions['ACKNOWLEDGE_WORD_START'],
 				payload: { id },
 			});
+			wordsActionsTimers.push(
+				setTimeout(() => {
+					dispatch({
+						type: WordsContextActions['ACKNOWLEDGE_WORD'],
+						payload: { id },
+					});
+				}, 500)
+			);
 		} catch (err) {
-			setActionError(err.message.split(': ')[1] || err.message);
+			if (isMounted.current) {
+				showSnackbarMessage(err.message.split(': ')[1] || err.message, 'error');
+			}
 		}
 		if (isMounted.current) {
 			setLoadingWords((pS) => ({ ...pS, [id]: false }));
@@ -309,7 +352,10 @@ const Words = () => {
 				});
 			} catch (err) {
 				if (isMounted.current) {
-					setActionError(err.message.split(': ')[1] || err.message);
+					showSnackbarMessage(
+						err.message.split(': ')[1] || err.message,
+						'error'
+					);
 				}
 			}
 			if (isMounted.current) {
@@ -378,18 +424,20 @@ const Words = () => {
 				payload: { id },
 			});
 			if (isMounted.current) {
-				setTimeout(() => {
-					if (isMounted.current) {
-						setLoadingWords((prevState) => ({
-							...prevState,
-							[id]: false,
-						}));
-					}
-					dispatch({
-						type: WordsContextActions.UN_MARK_WORD,
-						payload: { id },
-					});
-				}, 500);
+				wordsActionsTimers.push(
+					setTimeout(() => {
+						if (isMounted.current) {
+							setLoadingWords((prevState) => ({
+								...prevState,
+								[id]: false,
+							}));
+						}
+						dispatch({
+							type: WordsContextActions.UN_MARK_WORD,
+							payload: { id },
+						});
+					}, 500)
+				);
 			} else {
 				dispatch({
 					type: WordsContextActions.UN_MARK_WORD,
@@ -398,7 +446,7 @@ const Words = () => {
 			}
 		} catch (err) {
 			if (isMounted.current) {
-				setActionError(err.message);
+				showSnackbarMessage(err.message.split(': ')[1] || err.message, 'error');
 				setLoadingWords((prevState) => ({
 					...prevState,
 					[id]: false,
@@ -445,14 +493,7 @@ const Words = () => {
 				/>
 			)}
 			<Dialog data={dialogData} />
-			<Snackbar
-				data={{
-					onClose: () => setActionError(null),
-					open: actionError !== null,
-					content: actionError,
-					severity: 'error',
-				}}
-			/>
+			<Snackbar data={snackbarData} />
 		</>
 	);
 };

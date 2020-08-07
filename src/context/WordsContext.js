@@ -24,6 +24,7 @@ export const WordsContextActions = {
 	FETCH_KNOWN_WORDS_START: 'WORDS_FETCH_KNOWN_WORDS_START',
 	FETCH_KNOWN_WORDS_FINISH: 'WORDS_FETCH_KNOWN_WORDS_FINISH',
 	ADD_WORD: 'WORDS_ADD_WORD',
+	ACKNOWLEDGE_WORD_START: 'WORDS_ACKNOWLEDGE_WORD_START',
 	ACKNOWLEDGE_WORD: 'WORDS_ACKNOWLEDGE_WORD',
 	MARK_AS_KNOWN_START: 'WORDS_MARK_AS_KNOWN_START',
 	MARK_AS_KNOWN: 'WORDS_MARK_AS_KNOWN',
@@ -34,7 +35,7 @@ export const WordsContextActions = {
 	DELETE_WORD: 'WORDS_DELETE_WORD',
 	SET_MARKED_AS_NEW: 'WORDS_SET_MARKED_AS_NEW',
 	TRIGGER_REFRESH: 'WORDS_TRIGGER_REFRESH',
-	CLEAR_STATE: 'WORDS_CLEAR_STATE'
+	CLEAR_STATE: 'WORDS_CLEAR_STATE',
 };
 
 const reducer = (state, action) => {
@@ -73,7 +74,7 @@ const reducer = (state, action) => {
 				wordsMarkedAsNew: updatedWordsMarkedAsNew,
 			};
 		}
-		case WordsContextActions['ACKNOWLEDGE_WORD']: {
+		case WordsContextActions['ACKNOWLEDGE_WORD_START']: {
 			const { id } = action.payload;
 			const updatedWords = [...state.words];
 			const idx = updatedWords.findIndex((x) => x.id === id);
@@ -85,7 +86,18 @@ const reducer = (state, action) => {
 					collapse: true,
 				};
 			}
-			return { ...state, words: updatedWords };
+			return {
+				...state,
+				words: updatedWords,
+			};
+		}
+		case WordsContextActions['ACKNOWLEDGE_WORD']: {
+			const { id } = action.payload;
+			const updatedWords = state.words.filter((x) => x.id !== id);
+			return {
+				...state,
+				words: updatedWords,
+			};
 		}
 		case WordsContextActions['MARK_AS_KNOWN_START']: {
 			const { id } = action.payload;
