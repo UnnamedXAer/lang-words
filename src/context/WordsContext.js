@@ -147,6 +147,7 @@ const reducer = (state, action) => {
 		case WordsContextActions['UPDATE_WORD']: {
 			const { word, translations, id } = action.payload;
 			const updatedWords = [...state.words];
+			const updatedKnownWords = [...state.knownWords];
 			const idx = updatedWords.findIndex((x) => x.id === id);
 			if (idx > -1) {
 				updatedWords[idx] = {
@@ -154,9 +155,18 @@ const reducer = (state, action) => {
 					word,
 					translations: [...translations],
 				};
+			} else {
+				const idx = updatedKnownWords.findIndex((x) => x.id === id);
+				if (idx > -1) {
+					updatedKnownWords[idx] = {
+						...updatedKnownWords[idx],
+						word,
+						translations: [...translations],
+					};
+				}
 			}
 
-			return { ...state, words: updatedWords };
+			return { ...state, words: updatedWords, knownWords: updatedKnownWords };
 		}
 		case WordsContextActions['DELETE_WORD_START']: {
 			const { id } = action.payload;

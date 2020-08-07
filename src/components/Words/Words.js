@@ -180,7 +180,7 @@ const Words = () => {
 		setDialogData((prevState) => ({ ...prevState, open: false }));
 
 	const editHandler = (id) => {
-		const word = words.find((x) => x.id === id);
+		const word = (isInWords ? words : knownWords).find((x) => x.id === id);
 		setEditedWord(word);
 		setDialogData({
 			open: true,
