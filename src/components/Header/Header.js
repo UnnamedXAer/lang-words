@@ -3,11 +3,11 @@ import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { ROUTES } from '../../context/AppContext';
+import { ROUTES, AppContextActions } from '../../context/AppContext';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
 
-const Header = ({ appState: { activeRoute, user } }) => {
+const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },
@@ -21,6 +21,12 @@ const Header = ({ appState: { activeRoute, user } }) => {
 		} catch (err) {
 			console.log('logOut err: ', err);
 		}
+		dispatchApp({
+			type: AppContextActions['LOGOUT'],
+		});
+		dispatchWords({
+			type: WordsContextActions['CLEAR_STATE'],
+		});
 	};
 
 	const refreshWordsHandler = () => {

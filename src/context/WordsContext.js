@@ -34,6 +34,7 @@ export const WordsContextActions = {
 	DELETE_WORD: 'WORDS_DELETE_WORD',
 	SET_MARKED_AS_NEW: 'WORDS_SET_MARKED_AS_NEW',
 	TRIGGER_REFRESH: 'WORDS_TRIGGER_REFRESH',
+	CLEAR_STATE: 'WORDS_CLEAR_STATE'
 };
 
 const reducer = (state, action) => {
@@ -220,6 +221,9 @@ const reducer = (state, action) => {
 				wordsFetched: false,
 				knownWordsFetched: false,
 			};
+		}
+		case WordsContextActions['CLEAR_STATE']: {
+			return { ...initialState };
 		}
 		default:
 			return state;

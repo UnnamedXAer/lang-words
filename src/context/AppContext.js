@@ -53,8 +53,7 @@ const reducer = (state, action) => {
 
 		case AppContextActions['LOGOUT']:
 			return {
-				...state,
-				user: null,
+				...initialState,
 			};
 		default:
 			return state;
