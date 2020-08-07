@@ -12,8 +12,9 @@ import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
 import Spinner from '../UI/Spinner/Spinner';
 import Alert from '../UI/Alert/Alert';
-import { AppContext, ROUTES } from '../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
+import { ROUTES } from '../App/AppContent';
 
 const praseAPIWords = (values) => {
 	const receivedWords = [];
@@ -57,7 +58,7 @@ const Words = () => {
 			activeRoute: { hash },
 		},
 	] = useContext(AppContext);
-	const isInWords = hash === ROUTES['WORDS'].hash;
+	const isInWords = window.location.pathname === '/words'
 	const [
 		{
 			words,

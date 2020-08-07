@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import './SideDrawer.css';
-import { AppContext, ROUTES, AppContextActions } from '../../context/AppContext';
+import { AppContext, AppContextActions } from '../../context/AppContext';
+import { NavLink } from 'react-router-dom';
+import { ROUTES } from '../App/AppContent';
 
 const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
@@ -25,17 +27,13 @@ const SideDrawer = () => {
 			<nav className="drawer-navigation">
 				<ul>
 					{routesKeys.map((key) => (
-						<li key={key} onClick={() => navItemClickHandler(ROUTES[key])}>
-							<a
-								href={`${ROUTES[key].hash}`}
-								data-active={
-									ROUTES[key].hash === appState.activeRoute.hash
-										? 'true'
-										: 'false'
-								}
+						<li key={key}>
+							<NavLink
+								activeClassName="drawer-navigation-active"
+								to={`${ROUTES[key].path}/${ROUTES[key].param}`}
 							>
 								{ROUTES[key].label}
-							</a>
+							</NavLink>
 						</li>
 					))}
 				</ul>

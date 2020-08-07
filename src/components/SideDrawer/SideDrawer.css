@@ -26,6 +26,6 @@
 	color: var(--color-light);
 }
 
-.drawer-navigation a[data-active='true'] {
+.drawer-navigation-active {
 	color: var(--color-light);
 }

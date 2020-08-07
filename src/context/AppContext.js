@@ -3,29 +3,7 @@ import { FirebaseContext } from './FirebaseContext';
 
 export const AppContext = React.createContext();
 
-export const ROUTES = {
-	WORDS: { label: 'Words', hash: '#words' },
-	KNOWN_WORDS: { label: 'Know Words', hash: '#known-words' },
-};
-
-const getInitialRoute = () => {
-	let route;
-	switch (window.location.hash) {
-		case ROUTES['KNOWN_WORDS'].hash:
-			route = ROUTES['KNOWN_WORDS'];
-			break;
-		case ROUTES['WORDS'].hash:
-			route = ROUTES['WORDS'];
-			break;
-		default:
-			route = ROUTES['WORDS'];
-			break;
-	}
-	return route;
-};
-
 const initialState = {
-	activeRoute: getInitialRoute(),
 	user: null,
 	authLoading: false,
 };

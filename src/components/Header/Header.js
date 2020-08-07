@@ -3,11 +3,14 @@ import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { ROUTES, AppContextActions } from '../../context/AppContext';
+import { AppContextActions } from '../../context/AppContext';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '../App/AppContent';
 
 const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
+	const location = useLocation();
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },
@@ -34,7 +37,7 @@ const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 			type: WordsContextActions['TRIGGER_REFRESH'],
 		});
 	};
-
+	console.log(location);
 	return (
 		<header className="header">
 			<div className="header-title">
@@ -42,7 +45,7 @@ const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 				<span className="header-title-caption">
 					{!fetchingWords &&
 						wordsFetched &&
-						activeRoute.hash === ROUTES['WORDS'].hash &&
+						location.pathname === ROUTES['WORDS'].path &&
 						words.length + ' word' + (words.length === 1 ? '' : 's')}
 				</span>
 			</div>
