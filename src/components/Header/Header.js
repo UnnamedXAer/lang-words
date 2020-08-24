@@ -12,7 +12,9 @@ import { ROUTES } from '../../constants/route';
 const Header = ({ appState: { user }, dispatchApp }) => {
 	const location = useLocation();
 	const title =
-		location.state && location.state.key ? ROUTES[location.state.key].label : '';
+		user && location.state && location.state.key && location.state.key
+			? ROUTES[location.state.key].label
+			: '';
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },

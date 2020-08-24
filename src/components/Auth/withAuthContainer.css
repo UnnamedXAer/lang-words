@@ -51,19 +51,19 @@
 	color: var(--reject);
 }
 
-.auth-switch-form {
+.auth-helper-link {
 	font-size: 0.8em;
 	font-style: normal;
 	color: var(--color-darker);
 	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-.auth-switch-form:hover {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 	text-decoration: underline;
+}
+
+.auth-helper-link:hover {
 	cursor: pointer;
 	color: var(--color-dark);
 }

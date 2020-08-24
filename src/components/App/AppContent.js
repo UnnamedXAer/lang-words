@@ -6,15 +6,18 @@ import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Words from '../Words/Words';
 import { AppContext } from '../../context/AppContext';
-import Auth from '../Auth/Auth';
 import { ROUTES } from '../../constants/route';
+import ForgotPasswordForm from '../Auth/ForgotPasswordForm/ForgotPasswordForm';
+import AuthForm from '../Auth/AuthForm/AuthForm';
 
 export const AuthRoutes = ({ dispatchApp }) => {
 	return (
 		<Switch>
-			<Route path="/forget-password">forget password form here</Route>
+			<Route path="/forgot-password">
+				<ForgotPasswordForm />
+			</Route>
 			<Route path="/">
-				<Auth dispatchApp={dispatchApp} />
+				<AuthForm dispatchApp={dispatchApp} />
 			</Route>
 		</Switch>
 	);
