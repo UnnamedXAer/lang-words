@@ -4,19 +4,6 @@ import './assets/fonts/Open_Sans/OpenSans-Regular.ttf';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { ROUTES } from './context/AppContext';
-
-// (() => {
-// 	const {
-// 		location: { origin, hash, pathname, search },
-// 	} = window;
-
-// 	if (hash !== ROUTES.WORDS.hash && hash !== ROUTES.KNOWN_WORDS.hash) {
-// 		window.location.href = origin + '/' + ROUTES.WORDS.hash;
-// 	} else if (pathname !== '/' || search !== '') {
-// 		window.location.href = origin + '/' + hash;
-// 	}
-// })();
 
 ReactDOM.render(
 	<React.StrictMode>

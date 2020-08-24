@@ -69,10 +69,6 @@ const AppContextProvider = (props) => {
 		};
 	}, [firebase]);
 
-	useEffect(() => {
-		document.title = 'LANG WORD - ' + state.activeRoute.label;
-	}, [state.activeRoute]);
-
 	return (
 		<AppContext.Provider value={[state, dispatch]}>
 			{props.children}

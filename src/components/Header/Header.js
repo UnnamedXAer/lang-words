@@ -7,10 +7,12 @@ import { AppContextActions } from '../../context/AppContext';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
 import { useLocation } from 'react-router-dom';
-import { ROUTES } from '../App/AppContent';
+import { ROUTES } from '../../constants/route';
 
-const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
+const Header = ({ appState: { user }, dispatchApp }) => {
 	const location = useLocation();
+	const title =
+		location.state && location.state.key ? ROUTES[location.state.key].label : '';
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },
@@ -37,11 +39,11 @@ const Header = ({ appState: { activeRoute, user }, dispatchApp }) => {
 			type: WordsContextActions['TRIGGER_REFRESH'],
 		});
 	};
-	console.log(location);
+
 	return (
 		<header className="header">
 			<div className="header-title">
-				<span className="header-title-text">{activeRoute.label}</span>
+				<span className="header-title-text">{title}</span>
 				<span className="header-title-caption">
 					{!fetchingWords &&
 						wordsFetched &&

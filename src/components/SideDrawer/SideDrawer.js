@@ -1,20 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './SideDrawer.css';
-import { AppContext, AppContextActions } from '../../context/AppContext';
 import { NavLink } from 'react-router-dom';
-import { ROUTES } from '../App/AppContent';
+import { ROUTES } from '../../constants/route';
 
 const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
-	const [appState, appDispatch] = useContext(AppContext);
-
-	const navItemClickHandler = (route) => {
-		appDispatch({
-			type: AppContextActions.REDIRECT,
-			payload: route,
-		});
-	};
-
 	return (
 		<div className="side-drawer">
 			<div className="side-drawer-header">
@@ -30,7 +20,12 @@ const SideDrawer = () => {
 						<li key={key}>
 							<NavLink
 								activeClassName="drawer-navigation-active"
-								to={`${ROUTES[key].path}/${ROUTES[key].param}`}
+								to={{
+									pathname: `/${ROUTES[key].path}/${ROUTES[key].param}`,
+									state: {
+										key: key,
+									},
+								}}
 							>
 								{ROUTES[key].label}
 							</NavLink>

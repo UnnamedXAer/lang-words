@@ -12,9 +12,8 @@ import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
 import Spinner from '../UI/Spinner/Spinner';
 import Alert from '../UI/Alert/Alert';
-import { AppContext } from '../../context/AppContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
-import { ROUTES } from '../App/AppContent';
+import { useLocation } from 'react-router';
 
 const praseAPIWords = (values) => {
 	const receivedWords = [];
@@ -52,13 +51,10 @@ const clearTimers = () => {
 	wordsActionsTimers = [];
 };
 
-const Words = () => {
-	const [
-		{
-			activeRoute: { hash },
-		},
-	] = useContext(AppContext);
-	const isInWords = window.location.pathname === '/words'
+const Words = (props) => {
+	const location = useLocation();
+	const isInWords =
+		location.state && location.state.key === 'KNOWN_WORDS' ? false : true;
 	const [
 		{
 			words,
