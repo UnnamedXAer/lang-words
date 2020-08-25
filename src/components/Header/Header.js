@@ -55,9 +55,6 @@ const Header = ({ appState: { user }, dispatchApp }) => {
 			</div>
 			<div className="header-actions">
 				<span>
-					<p>{user.email}</p>
-				</span>
-				<span>
 					<Button
 						className="header-actions-button"
 						title="Logout"

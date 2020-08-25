@@ -9,6 +9,26 @@
 	height: var(--header-height);
 }
 
+.side-drawer-user {
+	margin: 8px 8px;
+}
+
+.side-drawer-user p:first-of-type {
+	color: var(--color-dark);
+}
+
+.side-drawer-divider {
+	height: 1px;
+	background-color: aliceblue;
+}
+
+.side-drawer-user p {
+	text-align: right;
+	font-style: oblique;
+	font-size: small;
+	font-weight: lighter;
+}
+
 .drawer-navigation {
 	margin-top: 8px;
 }

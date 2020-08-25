@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './SideDrawer.css';
 import { NavLink } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
+import { AppContext } from '../../context/AppContext';
 
 const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
+	const [{ user }] = useContext(AppContext);
 	return (
 		<div className="side-drawer">
 			<div className="side-drawer-header">
@@ -14,6 +16,11 @@ const SideDrawer = () => {
 					alt="lang word"
 				/> */}
 			</div>
+			<div className="side-drawer-user">
+				<p>Hello</p>
+				<p>{user.email}</p>
+			</div>
+			<div className="side-drawer-divider" />
 			<nav className="drawer-navigation">
 				<ul>
 					{routesKeys.map((key) => (
