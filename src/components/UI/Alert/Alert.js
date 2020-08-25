@@ -11,10 +11,11 @@ import Button from '../Button';
 	children: React.ReactNode;
 	onClose?: (args: any) => void | Promise<void>;
 	onClick: (args: any) => void | Promise<void>;
+	className?: string;
   }} props
  */
 const Alert = (props) => {
-	const { severity = 'info', onClick, onClose, children } = props;
+	const { severity = 'info', onClick, onClose, children, className } = props;
 
 	let icon;
 	switch (severity) {
@@ -35,7 +36,11 @@ const Alert = (props) => {
 	}
 
 	return (
-		<div className={`alert alert-${severity}`} onClick={onClick} role="alert">
+		<div
+			className={`alert alert-${severity} ${className}`}
+			onClick={onClick}
+			role="alert"
+		>
 			<div className="alert-content">
 				<div className="alert-icon">
 					<FontAwesomeIcon icon={icon} size="lg" edgeMode="" />

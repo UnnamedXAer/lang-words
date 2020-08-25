@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import './ForgotPasswordForm.css';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../../../context/FirebaseContext';
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button';
@@ -9,7 +9,6 @@ import withAuthContainer from '../withAuthContainer';
 
 const ForgotPasswordForm = () => {
 	const firebase = useContext(FirebaseContext);
-	const history = useHistory();
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('test@test.com');
@@ -32,11 +31,27 @@ const ForgotPasswordForm = () => {
 		}
 		setLoading(false);
 	};
+
+	const backBtn = (
+		<Link className="auth-helper-link" to={{ pathname: '/' }}>
+			Back
+		</Link>
+	);
+
 	return (
 		<>
 			<h1>Restore Password</h1>
 			{success ? (
-				<Alert>Check your email to continue.</Alert>
+				<>
+					<Alert className="forgot-password-success-alert">
+						Message with instruction and link to reset password was sent to
+						your email address.
+						<br />
+						Please, check your mail box to continue.
+					</Alert>
+
+					{backBtn}
+				</>
 			) : (
 				<form onSubmit={submitHandler}>
 					<label>
@@ -55,9 +70,7 @@ const ForgotPasswordForm = () => {
 						)}
 					</label>
 					<div className="forgot-password-actions">
-						<Link className="auth-helper-link" to={{ pathname: '/' }}>
-							Back
-						</Link>
+						{backBtn}
 						<Button loading={loading}>Reset</Button>
 					</div>
 				</form>
