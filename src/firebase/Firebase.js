@@ -35,7 +35,7 @@ class Firebase {
 	logOut = () => this.auth.signOut();
 
 	resetPassword = (email, actions) => {
-		return this.auth.sendPasswordResetEmail(email, {url: 'http://localhost:3000/'});
+		return this.auth.sendPasswordResetEmail(email, { url: window.location.origin });
 	};
 
 	updatePassword = (password) => {
