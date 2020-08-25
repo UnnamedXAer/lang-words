@@ -9,6 +9,8 @@ import { AppContext } from '../../context/AppContext';
 import { ROUTES } from '../../constants/route';
 import ForgotPasswordForm from '../Auth/ForgotPasswordForm/ForgotPasswordForm';
 import AuthForm from '../Auth/AuthForm/AuthForm';
+import Profile from '../Profile/Profile';
+import UpdatePassword from '../Profile/UpdatePassword/UpdatePassword';
 
 export const AuthRoutes = ({ dispatchApp }) => {
 	return (
@@ -41,7 +43,12 @@ export const WorkSectionRoutes = () => {
 			<Route path="/words">
 				<Words />
 			</Route>
-			<Route path="/profile">Your data here</Route>
+			<Route path="/profile">
+				<Profile />
+			</Route>
+			<Route path="/update-Password">
+				<UpdatePassword />
+			</Route>
 		</Switch>
 	);
 };

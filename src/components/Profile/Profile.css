@@ -1,0 +1,11 @@
+.profile {
+	margin: 8px;
+}
+
+.profile h1 {
+	margin-bottom: 1em;
+}
+
+.profile-update-password-container {
+	margin: 24px auto;
+}

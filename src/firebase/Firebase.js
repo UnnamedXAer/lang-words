@@ -34,12 +34,17 @@ class Firebase {
 
 	logOut = () => this.auth.signOut();
 
-	resetPassword = (email, actions) => {
+	resetPassword = (email) => {
 		return this.auth.sendPasswordResetEmail(email, { url: window.location.origin });
 	};
 
 	updatePassword = (password) => {
 		return this.auth.currentUser.updatePassword(password);
+	};
+
+	reauthenticate = (password) => {
+		const user = this.auth.currentUser;
+		return this.authorize(true, user.email, password);
 	};
 
 	words = () => {
