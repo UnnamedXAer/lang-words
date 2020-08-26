@@ -17,13 +17,6 @@
 	}
 }
 
-/* var(--min-width)*/
-@media screen and (max-width: 648px) {
-	.app {
-		overflow-x: auto;
-	}
-}
-
 /*calc(var(--min-height) + var(--var(header-height) + var(--footer-height))*/
 @media screen and (max-height: 590px) {
 	.app {
@@ -46,4 +39,22 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+}
+
+.app-content-main {
+	background-color: var(--bg-work-section);
+	flex: 1;
+	overflow-y: auto;
+}
+
+/* var(--min-width)*/
+@media screen and (max-width: 648px) {
+	.app {
+		overflow-x: auto;
+	}
+
+	.app-content,
+	.app-content-work-section-container {
+		min-width: unset;
+	}
 }

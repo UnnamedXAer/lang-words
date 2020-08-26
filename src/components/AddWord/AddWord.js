@@ -38,7 +38,7 @@ const AddWord = ({ open, onClose }) => {
 		});
 		newWord.id = res.key;
 		document
-			.querySelector('.work-section')
+			.querySelector('.app-content-main')
 			.scroll({ top: 0, left: 0, behavior: 'smooth' });
 		dispatch({
 			type: WordsContextActions.ADD_WORD,

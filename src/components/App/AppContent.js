@@ -64,7 +64,7 @@ const AppContent = () => {
 							<SideDrawer />
 							<div className="app-content-work-section">
 								<Header appState={appState} dispatchApp={dispatchApp} />
-								<main className="work-section">
+								<main className="app-content-main">
 									<WorkSectionRoutes />
 								</main>
 							</div>

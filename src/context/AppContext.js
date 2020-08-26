@@ -6,12 +6,14 @@ export const AppContext = React.createContext();
 const initialState = {
 	user: null,
 	authLoading: false,
+	drawerOpen: false,
 };
 
 export const AppContextActions = {
 	REDIRECT: 'APP_REDIRECT',
 	AUTHENTICATE: 'APP_AUTHENTICATE',
 	LOGOUT: 'APP_LOGOUT',
+	TOGGLE_DRAWER: 'APP_TOGGLE_DRAWER',
 };
 
 const reducer = (state, action) => {
@@ -32,6 +34,11 @@ const reducer = (state, action) => {
 		case AppContextActions['LOGOUT']:
 			return {
 				...initialState,
+			};
+		case AppContextActions['TOGGLE_DRAWER']:
+			return {
+				...state,
+				drawerOpen: !state.drawerOpen,
 			};
 		default:
 			return state;

@@ -11,6 +11,13 @@
 	align-items: stretch;
 }
 
+/* var(--min-width)*/
+@media screen and (max-width: 648px) {
+	.header {
+		padding-left: calc(var(--header-height) - 8px);
+	}
+}
+
 .header-title {
 	flex: 1;
 	display: flex;
@@ -39,12 +46,10 @@
 
 .header-actions-button {
 	margin: 0 16px 0 0;
-	font-size: large;	
+	font-size: large;
 }
 
 .header-add-word-placeholder {
-	width: 10;
 	height: 100%;
-	background-color: blue;
 	position: relative;
 }

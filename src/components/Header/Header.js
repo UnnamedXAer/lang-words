@@ -3,11 +3,10 @@ import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../UI/Button';
 import AddWord from '../AddWord/AddWord';
-import { AppContextActions } from '../../context/AppContext';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
-import { FirebaseContext } from '../../context/FirebaseContext';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
+import { AppContextActions } from '../../context/AppContext';
 
 const Header = ({ appState: { user }, dispatchApp }) => {
 	const location = useLocation();
@@ -20,21 +19,6 @@ const Header = ({ appState: { user }, dispatchApp }) => {
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },
 		dispatchWords,
 	] = useContext(WordsContext);
-	const firebase = useContext(FirebaseContext);
-
-	const logoutHandler = async () => {
-		try {
-			await firebase.logOut();
-		} catch (err) {
-			console.log('logOut err: ', err);
-		}
-		dispatchApp({
-			type: AppContextActions['LOGOUT'],
-		});
-		dispatchWords({
-			type: WordsContextActions['CLEAR_STATE'],
-		});
-	};
 
 	const refreshWordsHandler = () => {
 		dispatchWords({
@@ -54,15 +38,6 @@ const Header = ({ appState: { user }, dispatchApp }) => {
 				</span>
 			</div>
 			<div className="header-actions">
-				<span>
-					<Button
-						className="header-actions-button"
-						title="Logout"
-						onClick={logoutHandler}
-					>
-						Logout
-					</Button>
-				</span>
 				<span>
 					<Button
 						loading={fetchingWords || fetchingKnownWords}

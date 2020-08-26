@@ -23,3 +23,10 @@
 	transform: scale(1);
 	opacity: 1;
 }
+
+/* var(--min-width)*/
+@media screen and (max-width: 340px) {
+	.drop-down input {
+		max-width: 50vw !important;
+	}
+}

@@ -71,3 +71,10 @@
 	align-items: center;
 	background-color: transparent;
 }
+
+/* var(--min-width)*/
+@media screen and (max-width: 340px) {
+	.dialog input {
+		max-width: 50vw !important;
+	}
+}

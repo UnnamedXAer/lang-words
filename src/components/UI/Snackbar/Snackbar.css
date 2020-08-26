@@ -44,3 +44,10 @@
 		transform: translate(100vh, -100%);
 	}
 }
+
+/* var(--min-width)*/
+@media screen and (max-width: 340px) {
+	.snackbar {
+		min-width: unset;
+	}
+}
