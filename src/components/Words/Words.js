@@ -331,60 +331,50 @@ const Words = (props) => {
 		}));
 	};
 
-	const editWord = useCallback(
-		async (id, word, translations) => {
-			setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
-			try {
-				await firebase.words().child(`/${id}`).update({
-					word,
-					translations,
-				});
-				dispatch({
-					type: WordsContextActions.UPDATE_WORD,
-					payload: {
-						id,
-						word,
-						translations,
-					},
-				});
-			} catch (err) {
-				if (isMounted.current) {
-					showSnackbarMessage(
-						err.message.split(': ')[1] || err.message,
-						'error'
-					);
-				}
-			}
-			if (isMounted.current) {
-				setLoadingWords((prevState) => ({
-					...prevState,
-					[id]: false,
-				}));
-			}
-		},
-		[dispatch, firebase]
-	);
-
 	const saveEditedWordHandler = useCallback(async () => {
 		let sanitizedWord;
+		const { id } = editedWord;
 		try {
 			sanitizedWord = sanitizeWord(editedWord.word, editedWord.translations);
 		} catch (err) {
-			return setDialogData((prevState) => ({ ...prevState, error: err.message }));
+			return showSnackbarMessage(err.message, 'error');
 		}
-		setDialogData((prevState) => ({ ...prevState, loading: true, error: null }));
+		setDialogData((prevState) => ({ ...prevState, loading: true }));
+		setLoadingWords((prevState) => ({ ...prevState, [id]: true }));
 		try {
-			await editWord(editedWord.id, sanitizedWord.word, sanitizedWord.translations);
+			await firebase.words().child(`/${editedWord.id}`).update({
+				word: sanitizedWord.word,
+				translations: sanitizedWord.translations,
+			});
+			dispatch({
+				type: WordsContextActions.UPDATE_WORD,
+				payload: {
+					id: editedWord.id,
+					word: sanitizedWord.word,
+					translations: sanitizedWord.translations,
+				},
+			});
+			showSnackbarMessage('Word updated.', 'success');
+			if (isMounted.current) {
+				closeDialog();
+				setEditedWord(null);
+			}
 		} catch (err) {
 			if (isMounted.current) {
-				setDialogData((prevState) => ({ ...prevState, error: err.message }));
+				showSnackbarMessage(err.message.split(': ')[1] || err.message, 'error');
+				setDialogData((prevState) => ({
+					...prevState,
+					loading: false,
+				}));
 			}
 		}
-		if (isMounted) {
-			closeDialog();
-			setEditedWord(null);
+		if (isMounted.current) {
+			setLoadingWords((prevState) => ({
+				...prevState,
+				[id]: false,
+			}));
 		}
-	}, [editWord, editedWord]);
+	}, [dispatch, editedWord, firebase]);
 
 	useEffect(() => {
 		if (editedWord) {
