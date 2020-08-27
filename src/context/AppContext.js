@@ -4,6 +4,7 @@ import { FirebaseContext } from './FirebaseContext';
 export const AppContext = React.createContext();
 
 const initialState = {
+	splashScreenOpen: true,
 	user: null,
 	authLoading: false,
 	drawerOpen: false,
@@ -14,6 +15,7 @@ export const AppContextActions = {
 	AUTHENTICATE: 'APP_AUTHENTICATE',
 	LOGOUT: 'APP_LOGOUT',
 	TOGGLE_DRAWER: 'APP_TOGGLE_DRAWER',
+	CLOSE_SPLASH_SCREEN: 'APP_CLOSE_SPLASH_SCREEN',
 };
 
 const reducer = (state, action) => {
@@ -34,11 +36,17 @@ const reducer = (state, action) => {
 		case AppContextActions['LOGOUT']:
 			return {
 				...initialState,
+				splashScreenOpen: state.splashScreenOpen,
 			};
 		case AppContextActions['TOGGLE_DRAWER']:
 			return {
 				...state,
 				drawerOpen: !state.drawerOpen,
+			};
+		case AppContextActions['CLOSE_SPLASH_SCREEN']:
+			return {
+				...state,
+				splashScreenOpen: false,
 			};
 		default:
 			return state;
@@ -63,12 +71,14 @@ const AppContextProvider = (props) => {
 					id: authUser.uid,
 				};
 			}
-
 			dispatch({
 				type: AppContextActions.AUTHENTICATE,
 				payload: {
 					user,
 				},
+			});
+			dispatch({
+				type: AppContextActions['CLOSE_SPLASH_SCREEN'],
 			});
 		});
 		return () => {

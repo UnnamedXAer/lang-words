@@ -1,32 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import './AuthForm.css';
 import { Link } from 'react-router-dom';
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button';
-import { AppContextActions } from '../../../context/AppContext';
 import Alert from '../../UI/Alert/Alert';
 import { FirebaseContext } from '../../../context/FirebaseContext';
 import withAuthContainer from '../withAuthContainer';
 
-const AuthForm = ({ dispatchApp }) => {
+const AuthForm = () => {
 	const firebase = useContext(FirebaseContext);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isLogin, setIsLogin] = useState(true);
 	const [values, setValues] = useState({ email: 'test@test.com', password: 'qwe123' });
 	const [formErrors, setFormErrors] = useState({ email: null, password: null });
-
-	useEffect(() => {
-		const user = localStorage.getItem('user');
-		if (user) {
-			dispatchApp({
-				type: AppContextActions.AUTHENTICATE,
-				payload: {
-					user: JSON.parse(user),
-				},
-			});
-		}
-	}, [dispatchApp]);
 
 	const formChangeHandler = (ev) => {
 		const {

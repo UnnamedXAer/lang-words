@@ -11,16 +11,15 @@ import ForgotPasswordForm from '../Auth/ForgotPasswordForm/ForgotPasswordForm';
 import AuthForm from '../Auth/AuthForm/AuthForm';
 import Profile from '../Profile/Profile';
 import UpdatePassword from '../Profile/UpdatePassword/UpdatePassword';
+import Splash from '../Splash/Splash';
 
-export const AuthRoutes = ({ dispatchApp }) => {
+export const AuthRoutes = ({ splashScreenOpen }) => {
 	return (
 		<Switch>
 			<Route path="/forgot-password">
 				<ForgotPasswordForm />
 			</Route>
-			<Route path="/">
-				<AuthForm dispatchApp={dispatchApp} />
-			</Route>
+			<Route path="/">{splashScreenOpen ? <Splash /> : <AuthForm />}</Route>
 		</Switch>
 	);
 };
@@ -31,10 +30,10 @@ export const WorkSectionRoutes = () => {
 	useEffect(() => {
 		const route =
 			location.state && location.state.key ? ROUTES[location.state.key] : null;
-		document.title = 'LANG-WORD ' + (route ? ' - ' + route.label : '');
+		document.title = 'Lang Word ' + (route ? ' - ' + route.label : '');
 
 		return () => {
-			document.title = 'LANG-WORD';
+			document.title = 'Lang Word';
 		};
 	}, [location.pathname, location.state]);
 
@@ -54,7 +53,7 @@ export const WorkSectionRoutes = () => {
 };
 
 const AppContent = () => {
-	const [appState, dispatchApp] = useContext(AppContext);
+	const [appState] = useContext(AppContext);
 	return (
 		<div className="app-content">
 			<div className="app-content-work-section-container">
@@ -63,14 +62,14 @@ const AppContent = () => {
 						<>
 							<SideDrawer />
 							<div className="app-content-work-section">
-								<Header appState={appState} dispatchApp={dispatchApp} />
+								<Header appState={appState} />
 								<main className="app-content-main">
 									<WorkSectionRoutes />
 								</main>
 							</div>
 						</>
 					) : (
-						<AuthRoutes dispatchApp={dispatchApp} />
+						<AuthRoutes splashScreenOpen={appState.splashScreenOpen} />
 					)}
 				</Router>
 			</div>

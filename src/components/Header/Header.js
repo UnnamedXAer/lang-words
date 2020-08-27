@@ -6,9 +6,8 @@ import AddWord from '../AddWord/AddWord';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
-import { AppContextActions } from '../../context/AppContext';
 
-const Header = ({ appState: { user }, dispatchApp }) => {
+const Header = ({ appState: { user } }) => {
 	const location = useLocation();
 	const title =
 		user && location.state && location.state.key && location.state.key

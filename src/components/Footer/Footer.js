@@ -5,7 +5,7 @@ const Footer = () => {
 	return (
 		<footer className="footer">
 			<div className="footer-app-name">
-				<p>LANG-WORDS 2020 </p>
+				<p>Lang - Word 2020 </p>
 			</div>
 		</footer>
 	);
