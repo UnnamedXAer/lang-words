@@ -20,7 +20,12 @@
 
 .side-drawer-divider {
 	height: 1px;
-	background-color: aliceblue;
+	background: var(--color-darker);
+	background: linear-gradient(
+		153deg,
+		rgba(255, 255, 255, 0) 5%,
+		rgba(255, 255, 255, 0.5) 90%
+	);
 }
 
 .side-drawer-user p {
