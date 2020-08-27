@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './EditFormWord.css';
 import Input from '../UI/Input/Input';
 import Button from '../UI/Button';
 
@@ -64,9 +65,9 @@ const EditWordForm = ({ word, onWordUpdate, update }) => {
 				placeholder="Enter word"
 			/>
 			<fieldset>
-				<label className="add-word-translations-label">Translations</label>
+				<label className="edit-word-form-translations-label">Translations</label>
 				{translations.map((value, i) => (
-					<span key={i} className="add-word-translations-inp-wrapper">
+					<span key={i} className="edit-word-form-translations-inp-wrapper">
 						<Input
 							autoComplete="false"
 							autoCorrect="false"

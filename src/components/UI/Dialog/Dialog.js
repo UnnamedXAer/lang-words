@@ -5,6 +5,7 @@ import { Transition } from 'react-transition-group';
 import Button from '../Button';
 import Spinner from '../Spinner/Spinner';
 import Backdrop from '../Backdrop/Backdrop';
+import Divider from '../Divider/Divider';
 
 const dialogRoot = document.getElementById('dialog-root');
 
@@ -55,9 +56,8 @@ const Dialog = ({ data }) => {
 							>
 								<div className={['dialog', ' dialog-', status].join('')}>
 									<div className="dialog-title">{title}</div>
-									<hr />
 									<div className="dialog-content">{content}</div>
-									<hr />
+									<Divider />
 									{error && <div className="dialog-error">{error}</div>}
 									<div className="dialog-actions">
 										{actions ? (

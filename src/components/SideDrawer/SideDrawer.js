@@ -7,6 +7,7 @@ import { FirebaseContext } from '../../context/FirebaseContext';
 import { WordsContextActions } from '../../context/WordsContext';
 import Button from '../UI/Button';
 import Backdrop from '../UI/Backdrop/Backdrop';
+import Divider from '../UI/Divider/Divider';
 
 const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
@@ -47,7 +48,7 @@ const SideDrawer = () => {
 				<p>Hello</p>
 				<p>{user.email}</p>
 			</div>
-			<div className="side-drawer-divider" />
+			<Divider />
 			<nav className="drawer-navigation">
 				<ul>
 					{routesKeys.map((key) => (
@@ -76,7 +77,7 @@ const SideDrawer = () => {
 				<div />
 				<div />
 			</div>
-			<Backdrop open={drawerOpen} onClose={drawerToggleHandler} />
+			<Backdrop open={drawerOpen} onClose={drawerToggleHandler} zIndex={998} />
 		</div>
 	);
 };

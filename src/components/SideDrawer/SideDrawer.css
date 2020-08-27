@@ -18,16 +18,6 @@
 	color: var(--color-dark);
 }
 
-.side-drawer-divider {
-	height: 1px;
-	background: var(--color-darker);
-	background: linear-gradient(
-		153deg,
-		rgba(255, 255, 255, 0) 5%,
-		rgba(255, 255, 255, 0.5) 90%
-	);
-}
-
 .side-drawer-user p {
 	text-align: right;
 	font-style: oblique;
@@ -83,7 +73,7 @@
 		position: absolute;
 		transform: translateX(-100%);
 		height: calc(100vh - var(--footer-height));
-		z-index: 1001;
+		z-index: 999;
 		transition: transform 0.3s;
 		max-width: 100vw;
 	}

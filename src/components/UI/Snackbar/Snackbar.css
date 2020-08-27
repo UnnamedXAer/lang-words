@@ -1,6 +1,7 @@
 .snackbar {
 	min-width: 300px;
 	max-width: 100%;
+	z-index: 1500;
 }
 
 .snackbar-entering {

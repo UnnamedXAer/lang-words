@@ -5,7 +5,7 @@ import { Transition } from 'react-transition-group';
 
 const backdropRoot = document.getElementById('backdrop-root');
 
-const Backdrop = ({ onClose, open, onExited, timeout = 200 }) => {
+const Backdrop = ({ onClose, open, onExited, timeout = 200, zIndex = 1000 }) => {
 	const backdropRef = useRef(null);
 
 	return ReactDOM.createPortal(
@@ -21,6 +21,7 @@ const Backdrop = ({ onClose, open, onExited, timeout = 200 }) => {
 			{(status) => (
 				<div
 					ref={backdropRef}
+					style={{ zIndex }}
 					className={`backdrop backdrop-${status}`}
 					onClick={onClose}
 				></div>
