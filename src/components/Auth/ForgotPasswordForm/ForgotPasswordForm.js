@@ -23,8 +23,7 @@ const ForgotPasswordForm = () => {
 		}
 		setLoading(true);
 		try {
-			const res = await firebase.resetPassword(email);
-			console.log('res', res);
+			await firebase.resetPassword(email);
 			setSuccess(true);
 		} catch (err) {
 			setError(err.message);

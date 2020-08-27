@@ -62,9 +62,7 @@ const UpdatePassword = () => {
 	const logout = async () => {
 		try {
 			await firebase.logOut();
-		} catch (err) {
-			console.log('logOut err: ', err);
-		}
+		} catch (err) {}
 		dispatchApp({
 			type: AppContextActions['LOGOUT'],
 		});
