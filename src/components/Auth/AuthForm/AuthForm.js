@@ -105,6 +105,8 @@ const AuthForm = () => {
 				</label>
 				<div>
 					<p
+						role="button"
+						tabIndex="0"
 						className="auth-helper-link"
 						onClick={(ev) => {
 							setIsLogin((prevState) => !prevState);
@@ -113,14 +115,18 @@ const AuthForm = () => {
 						Switch to <strong>{isLogin ? 'Registration' : 'Login'}</strong>.
 					</p>
 				</div>
-				<Button btnType="success" loading={loading}>{isLogin ? 'Login' : 'Register'}</Button>
+				<Button btnType="success" loading={loading}>
+					{isLogin ? 'Login' : 'Register'}
+				</Button>
 				{isLogin && (
-					<Link
-						className="auth-helper-link"
-						to={{ pathname: '/forgot-password' }}
-					>
-						Forgot password?
-					</Link>
+					<div>
+						<Link
+							className="auth-helper-link"
+							to={{ pathname: '/forgot-password' }}
+						>
+							Forgot password?
+						</Link>
+					</div>
 				)}
 			</form>
 			{error && <Alert severity="error">{error}</Alert>}
