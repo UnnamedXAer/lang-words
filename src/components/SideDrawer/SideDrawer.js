@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import './SideDrawer.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
 import { AppContext, AppContextActions } from '../../context/AppContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
@@ -11,6 +11,7 @@ import Divider from '../UI/Divider/Divider';
 
 const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
+	const history = useHistory();
 	const [{ user, drawerOpen }, dispatchApp] = useContext(AppContext);
 	const [, dispatchWords] = useContext(AppContext);
 	const firebase = useContext(FirebaseContext);
@@ -25,6 +26,7 @@ const SideDrawer = () => {
 		dispatchWords({
 			type: WordsContextActions['CLEAR_STATE'],
 		});
+		history.push('/');
 	};
 
 	const drawerToggleHandler = () => {
@@ -36,9 +38,7 @@ const SideDrawer = () => {
 	return (
 		<div className={`side-drawer ${drawerOpen ? 'side-drawer-open' : ''}`}>
 			<div className="side-drawer-header">
-				<p className="side-drawer-header-text">
-					Lang Word
-				</p>
+				<p className="side-drawer-header-text">Lang Word</p>
 			</div>
 			<div className="side-drawer-user">
 				<p>Hello</p>
