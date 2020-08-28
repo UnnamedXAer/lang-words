@@ -58,6 +58,7 @@ const SideDrawer = () => {
 										key: key,
 									},
 								}}
+								exact
 							>
 								{ROUTES[key].label}
 							</NavLink>

@@ -14,7 +14,8 @@
 }
 
 .side-drawer-header-text {
-	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+		'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	font-variant-caps: small-caps;
 	font-size: xx-large;
 	color: var(--button-success);
@@ -49,10 +50,6 @@
 
 .drawer-navigation a:hover {
 	background-color: var(--drawer-hover);
-	color: var(--color-light);
-}
-
-.drawer-navigation-active {
 	color: var(--color-light);
 }
 
@@ -108,6 +105,10 @@
 	.side-drawer-header-text {
 		margin-left: calc(16px - var(--header-height));
 	}
+}
+
+.drawer-navigation-active {
+	color: turquoise !important;
 }
 
 .side-drawer-open {

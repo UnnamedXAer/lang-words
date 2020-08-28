@@ -1,6 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import './AppContent.css';
-import { BrowserRouter as Router, Switch, Route, useLocation } from 'react-router-dom';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	useLocation,
+	Redirect,
+} from 'react-router-dom';
 import SideDrawer from '../SideDrawer/SideDrawer';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -39,15 +45,19 @@ export const WorkSectionRoutes = () => {
 
 	return (
 		<Switch>
-			<Route path="/words">
+			<Route path={'/' + ROUTES['KNOWN_WORDS'].path} exact>
 				<Words />
 			</Route>
-			<Route path="/profile">
+			<Route path={'/' + ROUTES['WORDS'].path} exact>
+				<Words />
+			</Route>
+			<Route path={'/' + ROUTES['PROFILE'].path}>
 				<Profile />
 			</Route>
 			<Route path="/update-Password">
 				<UpdatePassword />
 			</Route>
+			<Redirect to={'/' + ROUTES['WORDS'].path + '/'} />
 		</Switch>
 	);
 };
