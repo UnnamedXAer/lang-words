@@ -10,7 +10,6 @@
 }
 
 .words-delete-word-highlight {
-	/* color: var(--warning); */
 	text-decoration: underline var(--warning) wavy;
 	margin-block-end: inherit;
 	margin-block-start: inherit;

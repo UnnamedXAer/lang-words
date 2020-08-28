@@ -11,7 +11,7 @@ const ForgotPasswordForm = () => {
 	const firebase = useContext(FirebaseContext);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const [email, setEmail] = useState('test@test.com');
+	const [email, setEmail] = useState('');
 	const [emailError, setEmailError] = useState(null);
 	const [success, setSuccess] = useState(false);
 

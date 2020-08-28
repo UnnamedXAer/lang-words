@@ -6,8 +6,6 @@ export const wordsSortFunc = (a, b) =>
 	(a.lastAcknowledgeAt || a.createAt) - (b.lastAcknowledgeAt || b.createAt);
 
 const initialState = {
-	firstLang: 'en',
-	secondLang: 'pl',
 	fetchingWords: false,
 	fetchingKnownWords: false,
 	wordsFetched: false,

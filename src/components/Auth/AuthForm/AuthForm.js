@@ -12,7 +12,7 @@ const AuthForm = () => {
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isLogin, setIsLogin] = useState(true);
-	const [values, setValues] = useState({ email: 'test@test.com', password: 'qwe123' });
+	const [values, setValues] = useState({ email: '', password: '' });
 	const [formErrors, setFormErrors] = useState({ email: null, password: null });
 
 	const formChangeHandler = (ev) => {
