@@ -34,6 +34,18 @@ const Dialog = ({ data }) => {
 	} = data;
 	const ref = useRef(null);
 
+	const keyUpHandler = (ev) => {
+		if (ev.keyCode === 27) {
+			onClose();
+		}
+	};
+
+	const enteringHandler = () => {
+		if (!ref.current.contains(document.activeElement)) {
+			ref.current.focus();
+		}
+	};
+
 	return (
 		<>
 			<Backdrop onClose={loading ? void 0 : onClose} open={open} timeout={200} />
@@ -46,13 +58,16 @@ const Dialog = ({ data }) => {
 					onExited={onExited}
 					appear
 					nodeRef={ref}
+					onEntering={enteringHandler}
 				>
 					{(status) => {
 						return (
 							<div
+								tabIndex={-1}
 								role="dialog"
 								ref={ref}
 								className={['dialog-backdrop'].join('')}
+								onKeyUp={keyUpHandler}
 							>
 								<div className={['dialog', ' dialog-', status].join('')}>
 									<div className="dialog-title">{title}</div>
