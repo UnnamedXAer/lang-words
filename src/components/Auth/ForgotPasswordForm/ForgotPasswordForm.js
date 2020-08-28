@@ -39,18 +39,25 @@ const ForgotPasswordForm = () => {
 
 	return (
 		<>
-			<h1>Restore Password</h1>
-			{success ? (
-				<>
-					<Alert className="forgot-password-success-alert">
+			<h1 className="forgot-password-headline">Restore Password</h1>
+			<Alert
+				className="forgot-password-success-alert"
+				severity={success ? 'success' : 'info'}
+			>
+				{success ? (
+					<p>
 						Message with instruction and link to reset password was sent to
 						your email address.
 						<br />
 						Please, check your mail box to continue.
-					</Alert>
+					</p>
+				) : (
+					'Enter your Email Address to start resetting password process.'
+				)}
+			</Alert>
 
-					{backBtn}
-				</>
+			{success ? (
+				backBtn
 			) : (
 				<form onSubmit={submitHandler}>
 					<label>
