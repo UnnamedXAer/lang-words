@@ -37,16 +37,18 @@ const Header = ({ appState: { user } }) => {
 				</span>
 			</div>
 			<div className="header-actions">
-				<span>
-					<Button
-						loading={fetchingWords || fetchingKnownWords}
-						className="header-actions-button"
-						title="Refresh Words"
-						onClick={refreshWordsHandler}
-					>
-						<FontAwesomeIcon icon="redo-alt" />
-					</Button>
-				</span>
+				{location.pathname.startsWith('/words') && (
+					<span>
+						<Button
+							loading={fetchingWords || fetchingKnownWords}
+							className="header-actions-button"
+							title="Refresh Words"
+							onClick={refreshWordsHandler}
+						>
+							<FontAwesomeIcon icon="redo-alt" />
+						</Button>
+					</span>
+				)}
 				<span>
 					<Button
 						className="header-actions-button"
