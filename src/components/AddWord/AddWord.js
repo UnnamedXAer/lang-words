@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import './AddWord.css';
+import { useHistory } from 'react-router';
 import DropDown from '../UI/DropDown/DropDown';
 import EditWordForm from '../EditWordForm/EditWordForm';
 import Button from '../UI/Button';
@@ -7,8 +8,10 @@ import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { sanitizeWord } from '../../utils/wordValidator';
 import Snackbar, { getInitialSnackbarData } from '../UI/Snackbar/Snackbar';
 import { FirebaseContext } from '../../context/FirebaseContext';
+import { ROUTES } from '../../constants/route';
 
 const AddWord = ({ open, onClose }) => {
+	const history = useHistory();
 	const [loading, setLoading] = useState(false);
 	const firebase = useContext(FirebaseContext);
 	const [state, dispatch] = useContext(WordsContext);
@@ -37,6 +40,8 @@ const AddWord = ({ open, onClose }) => {
 			createAt: firebase.ServerValueNS.TIMESTAMP,
 		});
 		newWord.id = res.key;
+		history.push('/' + ROUTES['WORDS'].path);
+
 		document
 			.querySelector('.app-content-main')
 			.scroll({ top: 0, left: 0, behavior: 'smooth' });
