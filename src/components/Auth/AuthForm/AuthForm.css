@@ -1,0 +1,6 @@
+.auth-headline {
+	font-weight: normal;
+	color: var(--button-success);
+	font-variant-caps: small-caps;
+	margin-bottom: 24px;
+}

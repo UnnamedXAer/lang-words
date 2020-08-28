@@ -71,7 +71,7 @@ const AuthForm = () => {
 
 	return (
 		<>
-			<h1>Authenticate</h1>
+			<h1 className="auth-headline">Lang Word</h1>
 			<form onSubmit={submitHandler}>
 				<label>
 					Email Address
@@ -113,7 +113,7 @@ const AuthForm = () => {
 						Switch to <strong>{isLogin ? 'Registration' : 'Login'}</strong>.
 					</p>
 				</div>
-				<Button loading={loading}>{isLogin ? 'Login' : 'Register'}</Button>
+				<Button btnType="success" loading={loading}>{isLogin ? 'Login' : 'Register'}</Button>
 				{isLogin && (
 					<Link
 						className="auth-helper-link"
