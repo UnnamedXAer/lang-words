@@ -4,6 +4,7 @@
 	font-size: medium;
 	padding: 8px 16px;
 	margin: 8px;
+	border: 1px solid var(--border)
 }
 
 .input:focus {

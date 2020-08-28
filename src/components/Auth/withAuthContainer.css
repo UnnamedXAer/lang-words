@@ -65,6 +65,12 @@
 	text-decoration: underline;
 }
 
+.auth-helper-link:focus {
+	outline-color: var(--border-stronger);
+	outline-style: solid;
+	outline-width: thick;
+}
+
 .auth-helper-link:hover {
 	cursor: pointer;
 	color: var(--color-medium);
