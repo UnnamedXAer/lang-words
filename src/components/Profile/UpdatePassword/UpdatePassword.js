@@ -106,6 +106,9 @@ const UpdatePassword = () => {
 					)}
 				</label>
 				<div className="update-password-actions">
+					<Button btnType="success" loading={loading}>
+						Update
+					</Button>
 					<button
 						className="update-password-back-button"
 						onClick={(ev) => {
@@ -115,7 +118,6 @@ const UpdatePassword = () => {
 					>
 						Back
 					</button>
-					<Button loading={loading}>Update</Button>
 				</div>
 				{(success || error) && (
 					<Alert severity={success ? 'success' : 'error'}>
