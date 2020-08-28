@@ -8,6 +8,16 @@
 .side-drawer-header {
 	background-color: var(--bg-header);
 	height: var(--header-height);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.side-drawer-header-text {
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-variant-caps: small-caps;
+	font-size: xx-large;
+	color: var(--button-success);
 }
 
 .side-drawer-user {
@@ -56,6 +66,10 @@
 	width: 100%;
 }
 
+.side-drawer-logout:hover {
+	color: var(--color-light);
+}
+
 .side-drawer-toggler {
 	display: none;
 }
@@ -89,6 +103,10 @@
 		width: calc(var(--header-height) - 16px);
 		height: var(--header-height);
 		transition: transform 0.15s;
+	}
+
+	.side-drawer-header-text {
+		margin-left: calc(16px - var(--header-height));
 	}
 }
 

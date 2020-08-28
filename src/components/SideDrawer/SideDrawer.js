@@ -36,11 +36,9 @@ const SideDrawer = () => {
 	return (
 		<div className={`side-drawer ${drawerOpen ? 'side-drawer-open' : ''}`}>
 			<div className="side-drawer-header">
-				{/* <img
-					style={{ maxWidth: '100%', maxHeight: '100%' }}
-					src="https://abc.jpg"
-					alt="lang word"
-				/> */}
+				<p className="side-drawer-header-text">
+					Lang Word
+				</p>
 			</div>
 			<div className="side-drawer-user">
 				<p>Hello</p>
