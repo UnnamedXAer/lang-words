@@ -71,7 +71,7 @@ const AuthForm = () => {
 
 	return (
 		<>
-			<h1 className="auth-headline">Lang Word</h1>
+			<h1 className="auth-headline">Lang Words</h1>
 			<form onSubmit={submitHandler}>
 				<label>
 					Email Address

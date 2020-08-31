@@ -38,7 +38,7 @@ const SideDrawer = () => {
 	return (
 		<div className={`side-drawer ${drawerOpen ? 'side-drawer-open' : ''}`}>
 			<div className="side-drawer-header">
-				<p className="side-drawer-header-text">Lang Word</p>
+				<p className="side-drawer-header-text">Lang Words</p>
 			</div>
 			<div className="side-drawer-user">
 				<p>Hello</p>

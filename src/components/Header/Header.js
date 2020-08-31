@@ -6,13 +6,11 @@ import AddWord from '../AddWord/AddWord';
 import { WordsContext, WordsContextActions } from '../../context/WordsContext';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
+import { getRouteTitle } from '../../utils/routeTitle';
 
 const Header = ({ appState: { user } }) => {
 	const location = useLocation();
-	const title =
-		user && location.state && location.state.key && location.state.key
-			? ROUTES[location.state.key].label
-			: '';
+	const title = getRouteTitle(location);
 	const [addWordOpen, setAddWordOpen] = useState(false);
 	const [
 		{ words, fetchingWords, fetchingKnownWords, wordsFetched },

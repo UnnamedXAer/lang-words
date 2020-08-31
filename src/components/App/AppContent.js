@@ -6,6 +6,8 @@ import {
 	Route,
 	useLocation,
 	Redirect,
+	useRouteMatch,
+	useHistory,
 } from 'react-router-dom';
 import SideDrawer from '../SideDrawer/SideDrawer';
 import Header from '../Header/Header';
@@ -18,6 +20,7 @@ import AuthForm from '../Auth/AuthForm/AuthForm';
 import Profile from '../Profile/Profile';
 import UpdatePassword from '../Profile/UpdatePassword/UpdatePassword';
 import Splash from '../Splash/Splash';
+import { getRouteTitle } from '../../utils/routeTitle';
 
 export const AuthRoutes = ({ splashScreenOpen }) => {
 	return (
@@ -34,14 +37,12 @@ export const WorkSectionRoutes = () => {
 	const location = useLocation();
 
 	useEffect(() => {
-		const route =
-			location.state && location.state.key ? ROUTES[location.state.key] : null;
-		document.title = 'Lang Word ' + (route ? ' - ' + route.label : '');
+		const title = getRouteTitle(location);
+		if (title) document.title = 'Lang Words - ' + title;
+		else document.title = 'Lang Words';
 
-		return () => {
-			document.title = 'Lang Word';
-		};
-	}, [location.pathname, location.state]);
+		return () => {};
+	}, [location]);
 
 	return (
 		<Switch>

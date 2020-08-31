@@ -1,1 +1,1 @@
-## Lang Word
+## Lang Words
