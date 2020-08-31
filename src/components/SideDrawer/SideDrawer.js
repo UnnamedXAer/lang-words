@@ -4,7 +4,7 @@ import { NavLink, useHistory } from 'react-router-dom';
 import { ROUTES } from '../../constants/route';
 import { AppContext, AppContextActions } from '../../context/AppContext';
 import { FirebaseContext } from '../../context/FirebaseContext';
-import { WordsContextActions } from '../../context/WordsContext';
+import { WordsContextActions, WordsContext } from '../../context/WordsContext';
 import Button from '../UI/Button';
 import Backdrop from '../UI/Backdrop/Backdrop';
 import Divider from '../UI/Divider/Divider';
@@ -13,7 +13,7 @@ const routesKeys = Object.keys(ROUTES);
 const SideDrawer = () => {
 	const history = useHistory();
 	const [{ user, drawerOpen }, dispatchApp] = useContext(AppContext);
-	const [, dispatchWords] = useContext(AppContext);
+	const [, dispatchWords] = useContext(WordsContext);
 	const firebase = useContext(FirebaseContext);
 
 	const logoutHandler = async () => {

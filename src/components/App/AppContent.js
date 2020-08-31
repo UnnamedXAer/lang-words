@@ -6,8 +6,6 @@ import {
 	Route,
 	useLocation,
 	Redirect,
-	useRouteMatch,
-	useHistory,
 } from 'react-router-dom';
 import SideDrawer from '../SideDrawer/SideDrawer';
 import Header from '../Header/Header';
